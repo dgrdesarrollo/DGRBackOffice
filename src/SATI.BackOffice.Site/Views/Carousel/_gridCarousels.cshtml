@@ -1,0 +1,52 @@
+@model GridCore<Carousel>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="ml-0 table table-striped table-bordered">
+                <thead>
+                    <tr role="row">
+                        <th class="col-2 p-0 m-0 text-center">T&iacute;tulo </th>
+                        <th class="col-3 p-0 m-0 text-center"> URL Texto   </th>
+                        <th class="col-2 p-0 m-0 text-center"> VigenciaDesde</th>
+                        <th class="col-2 p-0 m-0 text-center"> VigenciaHasta</th>
+                        <th class="col-1 p-0 m-0 text-center"> Orden      </th>
+                        <th class="col-1 p-0 m-0 text-center">Seleccionar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaDatos)
+                    {
+                        //if (alt) { clase = "alt"; alt = false; } else { clase = string.Empty; alt = true; }
+
+                    <tr role="row">
+                        <td>@item.Descripcion</td>
+
+                        <td>@item.TextoLink</td>
+                        <td>@item.VigenciaDesde.ToShortDateString()</td>
+                        <td>@item.VigenciaHasta.ToShortDateString()</td>
+                        <td>@item.Orden</td>
+                        <td class="text-center">
+                            <a asp-controller="carousel" asp-action="details" asp-route-id="@item.Id" class="btn btn-sm radius-15 btn-primary"><i class="bx bxs-info-circle font-20"></i> Detalle </a>
+                        </td>
+
+                    </tr>
+                    }
+                    <tr>
+                        <td colspan="8">
+                            @Html.PagedListPager(
+                          (IPagedList)Model.ListaDatos,
+                          page => Url.Action("Index", "carousel", new { page = page, sort = Model.Sort, sortdir = "ASC" }), new PagedListRenderOptions
+                          {
+                              LiElementClasses = new string[] { "page-item" },
+                              PageClasses = new string[] { "page-link" },
+                              Display = PagedListDisplayMode.IfNeeded
+                          })
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

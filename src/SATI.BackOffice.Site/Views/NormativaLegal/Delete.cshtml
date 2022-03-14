@@ -1,0 +1,37 @@
+@model dl_documentos
+@{
+                ViewBag.Title = "Eliminar archivo Normativa Legal";
+}
+    <partial name="~/Views/Shared/_TituloSimple.cshtml" />
+
+<div class="container">
+    <div class="card">
+        <div class="card-header  p-1 bg-danger text-white">
+            <span class="float-left p-2">
+                <i class="fas fa-tasks"></i>
+                Eliminar Normativa Legal
+            </span>
+            <a asp-action="details" asp-controller="NormativaLegal" asp-route-id="@Model.dl_id" class="float-right p-2 btn btn-link" style="color: white;">
+                <i class="fas fa-undo"></i>
+            </a>
+        </div>
+        <div class="card-body">
+            <h4 class="text-danger">¿Esta seguro de eliminar la Normativa Legal del Gestor?</h4>
+            <partial name="_verForm" />            
+        </div>
+        <div class="card-footer">
+            <form class="form-row" asp-action="delete" asp-controller="NormativaLegal" method="post">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.dlt_id)
+                <div class="row col-md-12 text-center">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-danger px-5 radius-15 pointer">
+                            <i class="fas fa-check-circle" aria-hidden="true"></i> <span> Eliminar</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+   

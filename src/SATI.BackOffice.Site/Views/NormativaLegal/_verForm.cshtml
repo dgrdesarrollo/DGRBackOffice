@@ -1,0 +1,57 @@
+@model dl_documentos
+
+<div class="card ">
+    <div class="card-body ">
+        <div class="row ">
+            <div class="col-md-2">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.dl_fecha)
+                    @Html.TextBoxFor(model => model.dl_fecha, new { @class = "form-control form-control-sm text-box single-line", @disabled = "disabled" })
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    @if (Model.dl_activo.Equals('S'))
+                    {
+                        <h4 class="text-success">NORMATIVA ACTIVA</h4>
+                    }
+                    else
+                    { <h4 class="text-danger">NORMATIVA <strong>NO</strong> ACTIVA</h4>}
+
+                </div>
+            </div>
+
+        </div>
+        <div class="row ">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.dl_titulo)
+                    @Html.TextBoxFor(model => model.dl_titulo, new { @class = "form-control form-control-sm text-box single-line", @disabled = "disabled" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.dlt_id)
+                    @Html.TextBoxFor(model => model.Tipo, new { @class = "form-control form-control-sm text-box single-line", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.dl_nota)
+                    @Html.TextAreaFor(model => model.dl_nota, new { @class = "form-control form-control-sm text-box single-line", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.dl_file)
+                    @Html.TextBoxFor(model => model.dl_file, new { @class = "form-control form-control-sm text-box single-line", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+

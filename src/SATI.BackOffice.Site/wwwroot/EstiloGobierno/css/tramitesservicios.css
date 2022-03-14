@@ -1,0 +1,76 @@
+
+
+.rectangleTramite-list li:nth-child(2) a:before{
+    content:"2";
+}
+.rectangleTramite-list li:nth-child(3) a:before{
+    content:"3";
+}
+.rectangleTramite-list li:nth-child(4) a:before{
+    content:"4";
+}
+.rectangleTramite-list li:nth-child(5) a:before{
+    content:"5";
+}
+.rounded-list li:nth-child(6) a:before{
+    content:"6";
+}
+.rectangleTramite-list li:nth-child(7) a:before{
+    content:"7";
+}
+
+
+ol.rectangleTramite-list {
+
+    padding: 8px;
+}
+  .rectangleTramite-list a{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    *padding: .4em;
+    margin: .5em 0 .5em 2.5em;
+    background: #ddd;
+    color: #444;
+    text-decoration: none;
+    transition: all .3s ease-out;   
+}
+
+.rectangleTramite-list a:hover{
+    background: #eee;
+}   
+
+.rectangleTramite-list a:before{
+    content: counter(li);
+    counter-increment: li;
+    position: absolute; 
+    left: -2.5em;
+    top: 50%;
+    margin-top: -1em;
+    background: #fa8072;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.rectangleTramite-list a:after{
+    position: absolute; 
+    content: '';
+    border: .5em solid transparent;
+    left: -1em;
+    top: 50%;
+    margin-top: -.5em;
+    transition: all .3s ease-out;               
+}
+
+.rectangleTramite-list a:hover:after{
+    left: -.5em;
+    border-left-color: #fa8072;             
+}  
+
+h2.tituloTramites {
+    color: white;
+}
+/* --------------- tramites y servicios --------------------*/

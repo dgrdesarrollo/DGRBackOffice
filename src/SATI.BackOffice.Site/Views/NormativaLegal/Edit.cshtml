@@ -1,0 +1,27 @@
+@model dl_documentos
+@{ ViewBag.Title = "Actualizar la Normativa Legal"; }
+<partial name="~/Views/Shared/_TituloSimple.cshtml" />
+
+<div class="container">
+    <div class="card">
+        <div class="card-header  p-1 bg-danger text-white">
+            <span class="float-left p-2">
+                <i class="fas fa-tasks"></i>
+                Editando Normativa Legal
+            </span>
+            <a asp-action="details" asp-controller="NormativaLegal" asp-route-id="@Model.dl_id" class="float-right p-2 btn btn-link" style="color: white;">
+                <i class="fas fa-undo"></i>
+            </a>
+        </div>
+        <form class="form-row" asp-action="edit" asp-controller="NormativaLegal" method="post" enctype="multipart/form-data">
+            <div class="card-body m-0 p-0">
+                @Html.AntiForgeryToken()
+                <partial name="_editForm" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/bkoff/backoffice.js"></script>
+}

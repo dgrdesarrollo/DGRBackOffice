@@ -1,0 +1,137 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: "patron-iconos";
+    font-style: normal;
+    font-weight: normal;
+
+    src: url("../fonts/patron-iconos/patron-iconos.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/patron-iconos/patron-iconos.woff") format("woff"),
+    url("../fonts/patron-iconos/patron-iconos.ttf") format("truetype"),
+    url("../fonts/patron-iconos/patron-iconos.svg#patron-iconos") format("svg");
+    src: url("../fonts/patron-iconos/patron-iconos.eot");
+}
+
+[data-icon]:before {
+    font-family: "patron-iconos" !important;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    line-height: 1;
+
+    content: attr(data-icon);
+    text-transform: none !important;
+
+    speak: none;
+}
+
+[class^="icono-"]:before,
+[class*=" icono-"]:before {
+    font-family: "patron-iconos" !important;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    line-height: 1;
+
+    text-transform: none !important;
+
+    speak: none;
+}
+
+.icono-youtube-play:before {
+    content: "\69";
+}
+.icono-facebook-official:before {
+    content: "\6a";
+}
+.icono-flickr:before {
+    content: "\6b";
+}
+.icono-buscar:before {
+    content: "\61";
+}
+.icono-link-externo:before {
+    content: "\62";
+}
+.icono-descarga:before {
+    content: "\63";
+}
+.icono-instagram:before {
+    content: "\64";
+}
+.icono-twitter:before {
+    content: "\65";
+}
+.icono-exclamacion:before {
+    content: "\66";
+}
+.icono-ambulancia:before {
+    content: "\67";
+}
+.icono-dialogo:before {
+    content: "\68";
+}
+.icono-noticias:before {
+    content: "\6c";
+}
+.icono-calendario:before {
+    content: "\6d";
+}
+.icono-ojo:before {
+    content: "\6e";
+}
+.icono-basura:before {
+    content: "\6f";
+}
+.icono-boletin-oficial:before {
+    content: "\70";
+}
+.icono-ciudadano-digital:before {
+    content: "\71";
+}
+.icono-contrataciones:before {
+    content: "\72";
+}
+.icono-expediente:before {
+    content: "\73";
+}
+.icono-informacion:before {
+    content: "\74";
+}
+.icono-iso-sj:before {
+    content: "\75";
+}
+.icono-mapa-salud:before {
+    content: "\76";
+}
+.icono-partida-nacimiento:before {
+    content: "\77";
+}
+.icono-pc:before {
+    content: "\78";
+}
+.icono-recibo-sueldo:before {
+    content: "\79";
+}
+.icono-sobre:before {
+    content: "\7a";
+}
+.icono-tramites:before {
+    content: "\41";
+}
+.icono-transporte-seguro:before {
+    content: "\42";
+}
+.icono-vivienda:before {
+    content: "\43";
+}
+.icono-vivienda-dinero:before {
+    content: "\44";
+}
+.icono-voto:before {
+    content: "\45";
+}

@@ -1,0 +1,75 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29/06/2016
+    Author     : aromero
+*/
+.fondoSubdominio {
+  background-color: #11384d;
+}
+.fondoLogoSubdominio {
+  background-color: #185676;
+}
+.dos {
+  background-color: #de6510;
+}
+.dos_claro {
+  background-color: #ece6a2;
+}
+.tres {
+  background-color: #9b1925;
+}
+section .iconos-destacados-dos {
+  color: #9b1925;
+}
+section .titulososcuros {
+  color: #9b1925;
+  font-weight: bold;
+}
+.footer {
+  background-color: #9b1925;
+}
+section .tituloscuatro {
+  font-size: 16px;
+  margin-top: 8px;
+}
+section .iconos-destacados-dos {
+  color: #fff;
+}
+section .iconos-destacados-dos {
+  float: left;
+  clear: both;
+  font-size: 40px;
+  padding: 8px 8px 0px 16px;
+}
+.hay-fijo {
+  padding-top: 0px;
+}
+.hay-fijo .fijo {
+  position: relative;
+  /*height: @logo_principal_fijado_height;*/
+  /*width: @logo_principal_fijado_width;*/
+}
+.hay-fijo .fijo .logoturismo {
+  display: block;
+  float: left;
+  margin: 12px 0px 0px 8px;
+  height: 168px;
+  width: 100%;
+  background-size: cover;
+  padding: 0px;
+}
+@media only screen and (max-width: 600px) {
+  .hay-fijo .fijo .logoturismo {
+    height: 90px;
+  }
+}
+.titulosdepartamentos {
+  color: #fff;
+  padding: 8px;
+  padding-left: 16px;
+  font-size: 20px;
+}

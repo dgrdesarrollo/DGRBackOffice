@@ -1,0 +1,55 @@
+﻿.float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    /*background-color: #0C9;*/
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 2px 2px 3px #999;
+}
+
+.my-float {
+    margin-top: 22px;
+}
+
+.expandida {
+    max-width: 95vw !important;
+    width: 95vw !important;
+}
+
+.imprimir_expandida {
+    width: 40px !important;
+    height: 40px !important;
+    right: 10px !important;
+    bottom: 50px !important;
+}
+
+.my_float_expandida {
+    margin-top: 12px;
+}
+
+.afip {
+    background: url(https://static.wixstatic.com/media/e4e3c2_2d1108de1c4644ab9321453276a3d3ea~mv2.png/v1/fit/w_16%2Ch_16%2Cal_c/file.png);
+    height: 16px;
+    width: 16px;
+    display: inline-block;
+    position: absolute;
+    margin-top: 4px
+}
+
+.afip-text {
+    display: inline-block;
+    margin-left: 20px;
+}
+.seccion-cu{
+    overflow:hidden;
+    transition:height 1s ease-out;
+    height:auto;
+}
+
+.tooltip {
+    z-index: 102000 !important;
+}

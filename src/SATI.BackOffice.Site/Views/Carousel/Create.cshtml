@@ -1,0 +1,27 @@
+@model Carousel
+@{ ViewBag.Title = "Agregar Nueva Imagen al Carousel"; }
+<partial name="~/Views/Shared/_TituloSimple.cshtml" />
+<div class="container">
+    <div class="card">
+        <div class="card-header  p-1 bg-danger text-white">
+            <span class="float-left p-2">
+                <i class="fas fa-tasks"></i>
+                Nueva Imagen
+            </span>
+            <a asp-action="details" asp-controller="carousel" asp-route-id="@Model.Id" class="float-right p-2 btn btn-link" style="color: white;">
+                <i class="fas fa-undo"></i>
+            </a>
+        </div>
+        <form class="form-row" asp-action="create" asp-controller="Carousel" method="post" enctype="multipart/form-data">
+            <div class="card-body m-0 p-0">
+                @Html.AntiForgeryToken()
+                <partial name="_editForm" />
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/bkoff/backoffice.js"></script>
+}

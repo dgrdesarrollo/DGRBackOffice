@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="log4net.config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SATI.BackOffice.Core\SATI.BackOffice.Core.csproj" />
+    <ProjectReference Include="..\SATI.BackOffice.Infraestructura\SATI.BackOffice.Infraestructura.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="log4net.config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.log4net.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Repositorio\" />
+  </ItemGroup>
+
+</Project>

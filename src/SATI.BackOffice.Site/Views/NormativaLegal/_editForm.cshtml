@@ -1,0 +1,58 @@
+@model dl_documentos
+
+@{ 
+    bool create = ViewBag.Modulo==null?false:true;
+}
+
+@Html.HiddenFor(model => model.dl_id)
+@Html.HiddenFor(model => model.dl_activo)
+
+<div class="card">
+    <div class="card-header">
+        <span class="p-2"><i class="fas fa-plus"></i>Edici&oacute;n de Normativa Legal</span>
+    </div>
+    <div class="card-body">
+        <div asp-validation-summary="All" class="text-danger"> </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                @Html.DisplayNameFor(m=>m.dl_fecha)
+                <input asp-for="dl_fecha" class="form-control" type="date" />
+                <span asp-validation-for="dl_fecha" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label asp-for="dlt_id" class="form-label"></label>
+                @Html.DropDownList("dlt_id", null, "Seleccionar...", new { @class = "form-select" })
+                <span asp-validation-for="dlt_id" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <label asp-for="dl_titulo" class="form-label"></label>
+                <input asp-for="dl_titulo" class="form-control" />
+                <span asp-validation-for="dl_titulo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <label asp-for="dl_nota" class="form-label"></label>
+                <textarea asp-for="dl_nota" class="form-control" rows="5" ></textarea>
+                <span asp-validation-for="dl_nota" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label asp-for="dl_file" class="form-label"></label>
+                @if (!create)
+                {
+                <input asp-for="dl_file" class="form-control" disabled/>
+                }
+                <input asp-for="Pdf" type="file" class="form-control form-control-file" />
+                <p class="text-primary"><i class="fa fa-info-circle fa-1x" title="Formato admitido .PDF"></i><small> Formato admitido .PDF</small></p>
+                <div class="col-12" id="file"></div>
+            </div>
+        </div>
+    </div>
+</div>

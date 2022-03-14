@@ -1,0 +1,250 @@
+body{
+  padding: 0px;
+}
+
+#frameContainer {
+  position: fixed;
+  height: 100%;
+  top:0px;
+  left: 160px;
+  right:0px;
+  bottom:0px;
+  z-index:1;
+}
+#main_iframe{
+  height: 100%;
+  width: 100%;
+}
+ .notice:first-child {
+        margin-top: 10px;
+    }
+
+    .notice {
+        padding: 15px;
+        background-color: #fafafa;
+        border-left: 6px solid #7f7f84;
+        margin-bottom: 10px;
+        -webkit-box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+        -moz-box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+        box-shadow: 0 5px 8px -6px rgba(0, 0, 0, .2);
+    }
+
+    .notice-sm {
+        padding: 10px;
+        font-size: 80%;
+    }
+
+    .notice-lg {
+        padding: 35px;
+        font-size: large;
+    }
+
+    .notice-Aviso {
+        border-color: #80D651;
+    }
+
+    .notice-Aviso>strong {
+        color: #80D651;
+    }
+
+    .notice-Informa {
+        border-color: #45ABCD;
+    }
+
+    .notice-Informa>strong {
+        color: #45ABCD;
+    }
+
+    .notice-Importante {
+        border-color: #FEAF20;
+    }
+
+    .notice-Importante>strong {
+        color: #FEAF20;
+    }
+
+    .notice-Urgente {
+        border-color: #d73814;
+    }
+
+    .notice-Urgente>strong {
+        color: #d73814;
+    }
+
+    .notice>.desc {
+        display: none;
+    }
+
+    .readMore {
+        cursor: pointer;
+    }
+  .syrah-lista-body {
+    overflow: hidden;
+  }
+  .btn-secondary {
+    color: #fff!important;
+
+}
+li.sy-item.syrah-opcion.w3-padding-8 {
+  border-top: 1px solid rgba(0,0,0,.125);
+}
+.embed-responsive-16by9::before {
+  padding-top: 0px!important;
+}
+/* para MENU PRINCIPAL */
+        @media (max-width: 767px) {
+            #menu-ppal-container {
+                /*padding-left: 0px;
+                padding-right: 0px;*/
+                padding: 0px!important;
+            }
+        }
+        @media (max-width: 767px) {
+          #myTab .text-dark{
+            font-size: 12px!important;
+          }
+        }
+
+        .nav-link {
+          cursor: pointer
+        }
+
+        #TabContent-menu{
+          display: none;
+        }
+
+        .nav-pills .nav-link{
+          border-top: 1px solid #343A40;
+          border-radius: 0px;
+          color: #212529;
+          padding: 8px 0px 6px 0px!important;
+          font-size: 14px;
+        }
+
+        .nav-pills .nav-link:first-child{
+          border:none;
+        }
+
+        .nav-pills .nav-link.active{
+          background-color:  #C4004E;
+          border-top:none;
+        }
+
+        .nav-pills .nav-link.active + .nav-link{
+          border-top:none;
+        }
+
+
+
+/*MENU PRINCIPAL RENTAS*/
+#menu-ppal-container .nav-item svg{
+  color:#c4004e;
+}
+
+#menu-ppal-container .nav-item h4{
+  color:#343a40;
+}
+
+#menu-ppal-container .nav-item a{
+  background-color: white;
+  height: 126px;
+}
+
+#menu-ppal-container .nav-item a.active{
+  background-color: #c4004e;
+}
+
+#menu-ppal-container .nav-item a.active svg{
+  color:white;
+}
+
+#menu-ppal-container .nav-item a.active h4{
+  color:white;
+}
+
+#TabContent-menu{
+  border-top: 1px solid #343a40;
+}
+
+@media (max-width: 767px){
+    #menu-ppal-container .nav-item h4 {
+        font-size: 12px!important;
+    }
+}
+/*FIN MENU PRINCIPAL*/
+
+/*ALERTA PRINCIPAL*/
+.notice-ppal .notice{
+  margin: 0px!important;
+}
+
+.notice-ppal .notice-Urgente{
+  background-color: #fbeded;
+}
+
+.notice-ppal .notice-Importante{
+  background-color: #fef7ed;
+}
+
+.notice-ppal .notice-Aviso{
+  background-color: #e9ede9;
+}
+
+.notice-ppal .notice-Informa{
+  background-color: #eef9fc;
+}
+
+.notice-ppal .alert{
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+  border-radius: 0px;
+}
+
+.notice-ppal,.notice-ppal:hover{
+  text-decoration: none!important;
+  color: #343a40;
+} 
+/*FIN ALERTA PRINCIPAL*/  
+
+/*PARALLAX*/
+.parallax{
+
+  /* Set a specific height */
+  min-height: 500px; 
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  padding-top: 60px;
+  padding-bottom: 60px;
+  /* The image used */
+  background-image: url("../img/rentas/debito2.jpg");
+  /* Add the blur effect */
+  /*filter: blur(8px);*/
+}
+
+#content-parallax{
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0, 0.7); /* Black w/opacity/see-through */
+  color: white;
+  font-weight: bold;
+  border: 3px solid #f1f1f1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 80%;
+  padding: 20px;
+  text-align: center;
+}
+
+/*FIN PARALLAX*/
+
+.fa-fw {
+   color: #c4004e;
+}

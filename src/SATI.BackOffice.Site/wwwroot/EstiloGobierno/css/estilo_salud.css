@@ -1,0 +1,42 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29/06/2016, 19/02/2016 07:46:48
+    Author     : aromero
+*/
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29/06/2016
+    Author     : aromero
+*/
+html {
+  background-color: #11384d;
+}
+.fondoSubdominio {
+  background-color: #11384d;
+}
+.fondoLogoSubdominio {
+  background-color: #185676;
+}
+.uno {
+  background-color: #419fce;
+}
+.dos {
+  background-color: #185676;
+}
+.tres {
+  background-color: #716f91;
+}
+section .iconos-destacados-dos {
+  color: #185676;
+}
+section .titulososcuros {
+  color: #185676;
+}

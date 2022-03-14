@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Meta no Cache-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>@ViewData["Title"] - BackOffice - DGR Web</title>
+
+    <link href="~/EstiloGobierno/css/custom-bootstrap.min.css" rel="stylesheet" />
+    <link href="~/EstiloGobierno/css/patron.css" rel="stylesheet" />
+    <link href="~/EstiloGobierno/css/patron-iconos.css" rel="stylesheet" />
+    <link href="~/fontawesome/css/all.css" rel="stylesheet" />
+    <link href="~/flickity.css" rel="stylesheet" />
+    <link href="~/bootstrap/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="~/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/bootstrap/gritter/css/jquery.gritter.css" rel="stylesheet" />
+    <link href="~/css/float.css" rel="stylesheet" />
+
+    <script src="~/js/modernizr-2.8.3.js"></script>
+</head>
+<body>
+    <header>
+        <!-- SECCION NAVEGACIÓN-->
+        <nav class="navbar navbar-light navbar-expand-md" id="navbar-ppal">
+            <div class="container">
+                <a href="http://www.sanjuan.gob.ar" class="navbar-brand padre-img1">
+                    <img src="~/EstiloGobierno/img/logo.png" alt="Isologo Gobierno de San Juan" width="150">
+                </a>
+                <a href="https://rentas.sanjuan.gob.ar" class="navbar-brand padre-img2">
+                    <img src="@(Url.Content("~/EstiloGobierno/img/rentas/rentas-hacienda-cabecera.png"))" alt="Isologo Rentas de San Juan" width="150" class="img2">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#menu-principal"
+                        aria-controls="menu-principal" aria-expanded="false" aria-label="Desplegar menú de navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                @*<div class="collapse navbar-collapse" id="menu-principal">
+                    <partial name="Sesion" />
+                </div>*@
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <!-- begin scroll to top btn -->
+        <a href="javascript:void(0);" class="btn-scroll-to-top btn btn-secondary" title="Subir" style="display: none;">Top<span></span></a>
+        <!-- end scroll to top btn  fa-angle-up-->
+        @RenderBody()
+
+        <footer class="container-fluid bg-primary py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-3 mb-5">
+                        <p>
+                            <a href="http://www.sanjuan.gob.ar" target="_self" title="Gobierno de San Juan">
+                                <img src="@(Url.Content("~/EstiloGobierno/img/logorentaswhite.png"))" alt="Gobierno de San Juan" width="100%">
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <h5>Dirección</h5>
+                        <ul class="list-unstyled text-small">
+                            <li>Av. Libertador Gral. San Martín 750 Oeste - Capital.</li>
+                            <li>Centro Cívico, Planta Baja.</li>
+                            <li>Conmutador: <a href="tel:2644306500">264 4306500</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <h5>Consultas y servicios</h5>
+                        <ul class="list-unstyled text-small">
+                            <li><a href="#">Consultas y solicitudes</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <h5>Accesos directos</h5>
+                        <ul class="list-unstyled text-small">
+                            <li>
+                                <a href="https://www.afip.gov.ar" target="_blank"
+                                   title="Administración Federal de Ingesos Públicos">AFIP</a>
+                            </li>
+                            <li>
+                                <a href="http://www.comarb.gov.ar" target="_blank"
+                                   title="Comisión Arbitral del Convenio Multilateral">Comarb</a>
+                            </li>
+                            <li>
+                                <a href="https://www.dnrpa.gov.ar" target="_blank" title="Dirección Nacional de Registros de la Propiedad
+            Automotor">DNRPA</a>
+                            </li>
+                            <li><a href="https://www.bancosanjuan.com" target="_blank">Banco San Juan</a></li>
+                            <li><a href="https://www.pagar.com.ar/" target="_blank">Link Pagos</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <partial name="Waiting" />
+    <partial name="Mensaje" />
+
+
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/jquery.validate.js"></script>
+    <script src="~/js/jquery.validate-vsdoc.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/bootstrap/select2/dist/js/select2.min.js"></script>
+    <script src="~/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+    <script src="~/moment/moment.min.js"></script>
+    <script src="~/bootstrap/gritter/js/jquery.gritter.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
