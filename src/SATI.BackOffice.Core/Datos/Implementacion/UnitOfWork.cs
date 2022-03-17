@@ -14,7 +14,7 @@ namespace SATI.BackOffice.Core.Datos.Implementacion
         private bool _disposed;
         private DatabaseContext _dbContext;
         private readonly ILoggerHelper _logger;
-        private readonly IOptions<ConnectionStrings> _options;
+        //private readonly IOptions<ConnectionStrings> _options;
 
         //internal DatabaseContext Contexto
         //{

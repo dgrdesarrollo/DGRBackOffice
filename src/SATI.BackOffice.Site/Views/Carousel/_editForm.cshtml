@@ -1,6 +1,6 @@
 @model Carousel
 @Html.HiddenFor(model => model.Id)
-
+@Html.HiddenFor(model => model.UbicacionFisica)
 
 
 
@@ -12,7 +12,7 @@
         <div asp-validation-summary="All" class="text-danger"> </div>
         <div class="form-group">
             <div class="col-md-12">
-                <label asp-for="Descripcion" class="form-label">Titulo</label>
+                <label asp-for="Descripcion" class="form-label"></label>
                 <input asp-for="Descripcion" class="form-control" />
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
@@ -31,9 +31,8 @@
         
         <div class="form-group">
             <div class="col-md-12">
-                    @Html.HiddenFor(m=>m.Url)
                 <label asp-for="Url" class="form-label"></label>
-                <input asp-for="Url" class="form-control" disabled />
+                <input asp-for="Url" class="form-control" />
                 <span asp-validation-for="Url" class="text-danger"></span>
             </div>
         </div>
@@ -65,16 +64,16 @@
                 <span asp-validation-for="Orden" class="text-danger"></span>
             </div>
         </div>
-        <div class="card-footer">
-            <div class="row col-md-12 text-center">
-                <div class="col-md-12">
-                    <button type="submit" class="btn btn-success px-5 radius-15 pointer">
-                        <i class="bx bx-check-circle" aria-hidden="true"></i> <span> Grabar</span>
-                    </button>
-                </div>
+        
+    </div>
+    <div class="card-footer">
+        <div class="row col-md-12 text-center">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-success px-5 radius-15 pointer">
+                    <i class="bx bx-check-circle" aria-hidden="true"></i> <span> Grabar</span>
+                </button>
             </div>
         </div>
     </div>
-    
 </div>
 

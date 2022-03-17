@@ -6,6 +6,7 @@ using SATI.BackOffice.Core.Servicios.Contrato;
 using SATI.BackOffice.Infraestructura.Entidades.Comunes;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
@@ -71,6 +72,13 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
         }
 
-     
+        internal void GeneradorDeRuta(string ruta)
+        {
+            if (!Directory.Exists(ruta))
+            {
+                Directory.CreateDirectory(ruta);
+            }
+        }
+
     }
 }

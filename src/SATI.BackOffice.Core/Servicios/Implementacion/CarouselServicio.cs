@@ -11,17 +11,20 @@ using SATI.BackOffice.Infraestructura.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
     public class CarouselServicio : Servicio<Carousel>, ICarouselServicio
     {
         private readonly ILoggerHelper _logger;
+        
         public CarouselServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options)
         {
-            _logger = logger;
+            _logger = logger;            
         }
 
         public RespuestaGenerica<Carousel> Buscar(QueryFilters filters)
@@ -52,6 +55,21 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             var registros = InvokarSp2Lst(sp, parametros);
             if (registros.Count > 0)
             {
+                #region se calcula su ubicación
+                foreach (var item in registros)
+                {
+                    var nn = item.Imagen;
+                    var ruta = item.UbicacionFisica.Replace(_appSettings.RutaFisica,"").Replace("\\","/");
+                    if(_appSettings.URLRepositorio.Substring(_appSettings.URLRepositorio.Length-1,1).Equals("/"))
+                    {
+                        item.Imagen = $"{_appSettings.URLRepositorio}{ruta}/{nn}";
+                    }
+                    else
+                    {
+                        item.Imagen = $"{_appSettings.URLRepositorio}/{ruta}/{nn}";
+                    }
+                }
+                #endregion
                 _logger.Log(TraceEventType.Information, $"Resgistros encontrados: {registros.Count} - Filtros: {JsonConvert.SerializeObject(filters)} - SP: {sp}");
                 return new RespuestaGenerica<Carousel> { Ok = true, ListaItems = registros, CantidadReg = registros.Count, TotalRegs = cantidad };
             }
@@ -80,10 +98,24 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                 return new RespuestaGenerica<Carousel> { Ok = true, DataItem = car };
             }
         }
-
         public int Agregar(Carousel entidad)
         {
+            throw new NotImplementedException();
+        }
+        public async Task<int> AgregarAsync(Carousel entidad)
+        {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
+
+            #region Guardar archivo desdeB64 a disco
+            var archBytes = Convert.FromBase64String(entidad.Archivo.ToString());
+            MemoryStream ms = new MemoryStream(archBytes);
+            using (Stream fs = new FileStream($"{entidad.UbicacionFisica}\\{entidad.Imagen}",FileMode.Create))
+            {
+                await ms.CopyToAsync(fs);
+            }
+
+            #endregion
+
             var sp = Constantes.StoredProcedures.CAROUSEL_INSERT;
             var excluir = new List<string> { "Id", "Archivo" };
             var parametros = _repositorio.InferirParametros(entidad, excluir);
@@ -115,5 +147,42 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             var res = InvokarNQuery(sp, p);
             return res > 0;
         }
+
+        public string CalcularRuta(string codigoSistema)
+        {
+            var fecha = DateTime.Today;
+            string ruta = string.Empty;
+            if (string.IsNullOrWhiteSpace(codigoSistema))
+            {
+                codigoSistema = "XX";
+            }
+            //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
+            if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
+            {
+                ruta = $"{_appSettings.RutaFisica}\\Carrusel\\{codigoSistema}\\{fecha.Year}";
+            }
+            else
+            {
+                ruta = $"{_appSettings.RutaFisica}Carrusel\\{codigoSistema}\\{fecha.Year}";
+            }
+            //Genera directorio Año
+            GeneradorDeRuta(ruta);
+
+            //verificarmos que exista el directorio mes, sino lo crea
+            ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";            
+            //Genera directorio mes
+            GeneradorDeRuta(ruta);
+
+            //Verificamos si existe el directiro día, sino lo crea
+            ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
+            //Genera directorio dia
+            GeneradorDeRuta(ruta);
+
+            return ruta;
+        }
+
+       
+
+        
     }
 }

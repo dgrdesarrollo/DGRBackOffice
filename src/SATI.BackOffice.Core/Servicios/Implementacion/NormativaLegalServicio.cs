@@ -11,8 +11,10 @@ using SATI.BackOffice.Infraestructura.Intefaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
@@ -28,21 +30,41 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         public int Actualizar(object id, dl_documentos entidad)
         {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
-            var sp = Constantes.StoredProcedures.NORMA_LEGAL_UPDATE;
-            var excluir = new List<string> { "Tipo","Pdf" };
-            var parametros = _repositorio.InferirParametros(entidad, excluir);
-            var res = InvokarNQuery(sp, parametros);
+            string sp = Constantes.StoredProcedures.NORMA_LEGAL_UPDATE;
+            List<string> excluir = new List<string> { "Tipo","Pdf" };
+            List<SqlParameter> parametros = _repositorio.InferirParametros(entidad, excluir);
+            int res = InvokarNQuery(sp, parametros);
             return res;
         }
 
         public int Agregar(dl_documentos entidad)
         {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> AgregarAsync(dl_documentos entidad)
+        {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
-            var sp = Constantes.StoredProcedures.NORMA_LEGAL_INSERT;
-            var excluir = new List<string> { "dlt_id", "Tipo", "Pdf" };
-            var parametros = _repositorio.InferirParametros(entidad, excluir);
-            var res = InvokarNQuery(sp, parametros);
+
+            #region Guardar archivo desdeB64 a disco
+            byte[] archBytes = Convert.FromBase64String(entidad.Pdf.ToString());
+            MemoryStream ms = new MemoryStream(archBytes);
+            using (Stream fs = new FileStream($"{entidad.UbicacionFisica}\\{entidad.dl_file}", FileMode.Create))
+            {
+                await ms.CopyToAsync(fs);
+            }
+
+            #endregion
+
+            string sp = Constantes.StoredProcedures.NORMA_LEGAL_INSERT;
+
+            List<string> excluir = new List<string> { "dl_id", "Pdf","Tipo" };
+            List<SqlParameter> parametros = _repositorio.InferirParametros(entidad, excluir);
+            _logger.Log(TraceEventType.Information, $"Excluidos: {JsonConvert.SerializeObject(excluir)}");
+            _logger.Log(TraceEventType.Information, $"Parametros: {JsonConvert.SerializeObject(parametros)}");
+            int res = InvokarNQuery(sp, parametros);
             return res;
+
         }
 
         public RespuestaGenerica<dl_documentos> Buscar(QueryFilters filters)
@@ -69,10 +91,30 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             sp = Constantes.StoredProcedures.NORMA_LEGAL_GET_ALL;
             parametros = new List<SqlParameter> {
                 new SqlParameter("@size", filters.PageSize),
+                new SqlParameter("@tipo", filters.IdRef),
                 new SqlParameter("@Pagina", filters.PageNumber) };
             var registros = InvokarSp2Lst(sp, parametros);
             if (registros.Count > 0)
             {
+                #region se calcula su ubicación
+                foreach (var item in registros)
+                {
+                    if (string.IsNullOrWhiteSpace(item.UbicacionFisica))
+                    {
+                        continue;
+                    }
+                    var nn = item.dl_file;
+                    var ruta = item.UbicacionFisica.Replace(_appSettings.RutaFisica, "").Replace("\\", "/");
+                    if (_appSettings.URLRepositorio.Substring(_appSettings.URLRepositorio.Length - 1, 1).Equals("/"))
+                    {
+                        item.Pdf = $"{_appSettings.URLRepositorio}{ruta}/{nn}";
+                    }
+                    else
+                    {
+                        item.Pdf = $"{_appSettings.URLRepositorio}/{ruta}/{nn}";
+                    }
+                }
+                #endregion
                 _logger.Log(TraceEventType.Information, $"Resgistros encontrados: {registros.Count} - Filtros: {JsonConvert.SerializeObject(filters)} - SP: {sp}");
                 return new RespuestaGenerica<dl_documentos> { Ok = true, ListaItems = registros, CantidadReg = registros.Count, TotalRegs = cantidad };
             }
@@ -100,6 +142,40 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                 _logger.Log(TraceEventType.Information, $"Registro Encontrado - Carousel: {JsonConvert.SerializeObject(car)} - SP: {sp}");
                 return new RespuestaGenerica<dl_documentos> { Ok = true, DataItem = car };
             }
+        }
+
+        public string CalcularRuta(string codigoSistema)
+        {
+            var fecha = DateTime.Today;
+            string ruta = string.Empty;
+            if (string.IsNullOrWhiteSpace(codigoSistema))
+            {
+                codigoSistema = "XX";
+            }
+            //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
+            if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
+            {
+                ruta = $"{_appSettings.RutaFisica}\\Digesto\\{codigoSistema}\\{fecha.Year}";
+            }
+            else
+            {
+                ruta = $"{_appSettings.RutaFisica}Digesto\\{codigoSistema}\\{fecha.Year}";
+            }
+            //Genera directorio Año
+            GeneradorDeRuta(ruta);
+
+            //verificarmos que exista el directorio mes, sino lo crea
+            ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";
+            //Genera directorio mes
+            GeneradorDeRuta(ruta);
+
+            //Verificamos si existe el directiro día, sino lo crea
+            ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
+            //Genera directorio dia
+            GeneradorDeRuta(ruta);
+
+
+            return ruta;
         }
 
         public bool Quitar(object Id)

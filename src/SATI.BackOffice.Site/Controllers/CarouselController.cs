@@ -3,15 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
-using SATI.BackOffice.Core.Servicios.Contrato;
 using SATI.BackOffice.Infraestructura.Entidades;
 using SATI.BackOffice.Infraestructura.Entidades.Comunes;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
 using SATI.BackOffice.Infraestructura.Intefaces;
+using SATI.BackOffice.Site.Core.Servicios.Contratos;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -21,16 +19,16 @@ namespace SATI.BackOffice.Site.Controllers
     {
         private readonly ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
-        private readonly ICarouselServicio _carouselServicio;
-        private readonly IWebHostEnvironment _hosting;
+        private readonly ICarruselServicio _carruselServicio;
 
-        public CarouselController(ICarouselServicio carouselServicio, ILoggerHelper logger,
+
+
+        public CarouselController(ILoggerHelper logger, ICarruselServicio carruselServicio,
             IOptions<AppSettings> options, IWebHostEnvironment hosting) : base(options)
         {
             _appSettings = options.Value;
             _logger = logger;
-            _carouselServicio = carouselServicio;
-            _hosting = hosting;
+            _carruselServicio = carruselServicio;
         }
 
         // GET: CarouselController
@@ -39,7 +37,7 @@ namespace SATI.BackOffice.Site.Controllers
             try
             {
                 //string token = TokenCookie;
-                var grilla = ObtenerCarouselsAsync(buscar, sortdir, sort, page);
+                var grilla = ObtenerCarouselsAsync(buscar, sortdir, sort, page).Result;
                 ViewData["Title"] = "Administración de Carousel";
                 return View(grilla);
             }
@@ -52,35 +50,39 @@ namespace SATI.BackOffice.Site.Controllers
 
         }
 
-        private GridCore<Carousel> ObtenerCarouselsAsync(string buscar, string sortdir, string sort, int page)
+        private async Task<GridCore<Carousel>> ObtenerCarouselsAsync(string buscar, string sortdir, string sort, int page)
         {
-            var carousels = _carouselServicio.Buscar(new QueryFilters { Search = buscar, PageNumber = page, Sort = sort, SortDir = sortdir, PageSize = _appSettings.DefaultPageSize });
-            List<Carousel> entidades = carousels.ListaItems;
 
-            var lista = new StaticPagedList<Carousel>(entidades, page, carousels.CantidadReg, carousels.TotalRegs);
+
+            var respuesta = await _carruselServicio.BuscarAsync(new QueryFilters { Search = buscar, PageNumber = page, Sort = sort, SortDir = sortdir, PageSize = _appSettings.DefaultPageSize });
+
+            //var carousels = _carouselServicio.Buscar(new QueryFilters { Search = buscar, PageNumber = page, Sort = sort, SortDir = sortdir, PageSize = _appSettings.DefaultPageSize });
+            //List<Carousel> entidades = carousels.ListaItems;
+            var meta = respuesta.Item2;
+            var lista = new StaticPagedList<Carousel>(respuesta.Item1, page, meta.PageSize, meta.TotalCount);
 
             return new GridCore<Carousel>()
             {
                 ListaDatos = lista,
-                CantidadReg = carousels.TotalRegs,
+                CantidadReg = meta.TotalCount,
                 PaginaActual = page,
-                CantidadPaginas = carousels.TotalRegs < _appSettings.DefaultPageSize ? 1 : carousels.TotalRegs / _appSettings.DefaultPageSize,
+                CantidadPaginas = meta.TatalPages,
                 Sort = sort,
                 SortDir = sortdir.Equals("ASC") ? "DESC" : "ASC"
             };
         }
 
         // GET: CarouselController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
             try
             {
-                var carousel = _carouselServicio.BuscarPorId(id);
-                if (!carousel.Ok)
+                var carousel = await _carruselServicio.BuscarAsync(id);
+                if (carousel == null)
                 {
-                    TempData["warn"] = "El Carousel buscado no se encontró.";
+                    TempData["warn"] = "La Imagen buscada no se encontró.";
                 }
-                return View(carousel.DataItem);
+                return View(carousel);
             }
             catch (Exception ex)
             {
@@ -89,6 +91,7 @@ namespace SATI.BackOffice.Site.Controllers
             }
             return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "Carousel", action = "Index" }));
         }
+
 
         // GET: CarouselController/Create
         public ActionResult Create()
@@ -109,15 +112,19 @@ namespace SATI.BackOffice.Site.Controllers
                 }
                 else
                 {
+                    if (archivo.Length > _appSettings.FileSize)
+                    {
+                    ModelState.AddModelError("Archivo", "El archivo es demasiado grande. Tamaño máximo 5Mb.");
+                    }
                     datos.Imagen = archivo.FileName;
                 }
-               
+
                 if (datos is null)
                 {
                     throw new ArgumentNullException(nameof(datos));
                 }
                 if (datos.VigenciaDesde >= datos.VigenciaHasta)
-                {                  
+                {
                     ModelState.AddModelError("VigenciaDesde", "Se definieron fechas erroneas. Verifique.");
                 }
                 if (!ModelState.IsValid)
@@ -126,16 +133,28 @@ namespace SATI.BackOffice.Site.Controllers
                 }
                 else
                 {
-                    var ruta = Path.Combine(_appSettings.RutaFiles,_appSettings.FolderCarousel);
-                    ruta += $"\\{datos.Imagen}";
-                    using (Stream fs = new FileStream(ruta, FileMode.Create))
-                    {
-                        await archivo.CopyToAsync(fs);
-                    }
-                    datos.Imagen = $"{_appSettings.URLRepositorio}/{_appSettings.FolderCarousel}/{datos.Imagen}";
-                    datos.Url = $"{_appSettings.URLRepositorio}//{_appSettings.FolderCarousel}";
-                    var res = _carouselServicio.Agregar(datos);
-                    if (res > 0)
+                    #region Invoco API y calculo ruta
+
+                    string ruta = await _carruselServicio.CalcularRuta("XX");
+
+                    #endregion
+
+                    #region se convierte la imagene en Base64                    
+                    MemoryStream ms = new();
+                    archivo.CopyTo(ms);
+                    var archB64 = Convert.ToBase64String(ms.ToArray());
+                    #endregion
+
+                    //cargamos el archivo en B64
+                    datos.Archivo = archB64;
+                    datos.UbicacionFisica = ruta;
+
+
+                    #region Subiendo archivo al repositorio a traves de la api
+                    var respuesta = await _carruselServicio.AgregarAsync(datos);
+                    #endregion
+
+                    if (respuesta)
                     {
                         TempData["info"] = "Se agrego satisfactoriamente el Carousel";
                         return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "Carousel", action = "Index" }));
@@ -156,18 +175,16 @@ namespace SATI.BackOffice.Site.Controllers
         }
 
         // GET: CarouselController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             try
             {
-                var carousel = _carouselServicio.BuscarPorId(id);
-                if (!carousel.Ok)
+                var carousel = await _carruselServicio.BuscarAsync(id);
+                if (carousel == null)
                 {
-                    TempData["warn"] = "El Carousel buscado no se encontró.";
-                    return RedirectToAction("Index");
+                    TempData["warn"] = "La Imagen buscada no se encontró.";
                 }
-                ImagenEnEdicion = carousel.DataItem.Imagen;
-                return View(carousel.DataItem);
+                return View(carousel);
             }
             catch (Exception ex)
             {
@@ -187,7 +204,7 @@ namespace SATI.BackOffice.Site.Controllers
                 if (archivo != null)
                 {
                     datos.Imagen = archivo.FileName;
-                }               
+                }
                 if (datos is null)
                 {
                     throw new ArgumentNullException(nameof(datos));
@@ -201,17 +218,17 @@ namespace SATI.BackOffice.Site.Controllers
                 {
                     if (archivo != null)
                     {
-                        var ruta = Path.Combine(_appSettings.RutaFiles, _appSettings.FolderCarousel);
-                        ruta += $"\\{datos.Imagen}";
-                        using (Stream fs = new FileStream(ruta, FileMode.Create))
-                        {
-                            await archivo.CopyToAsync(fs);
-                        }
+                        #region se convierte la imagene en Base64                    
+                        MemoryStream ms = new();
+                        archivo.CopyTo(ms);
+                        var archB64 = Convert.ToBase64String(ms.ToArray());
+                        datos.Archivo = archB64;
+                        #endregion
                     }
-                    datos.Imagen = $"{_appSettings.URLRepositorio}/{_appSettings.FolderCarousel}/{datos.Imagen}";
-                    datos.Url = $"{_appSettings.URLRepositorio}//{_appSettings.FolderCarousel}";
-                    var res = _carouselServicio.Actualizar(datos.Id, datos);
-                    if (res > 0)
+                    #region Subiendo archivo al repositorio a traves de la api
+                    var respuesta = await _carruselServicio.ActualizarAsync(datos.Id, datos);
+                    #endregion
+                    if (respuesta)
                     {
                         TempData["info"] = "Se Actualizo satisfactoriamente el Carousel";
                         return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "Carousel", action = "Index" }));
@@ -222,7 +239,6 @@ namespace SATI.BackOffice.Site.Controllers
                     }
                 }
             }
-
             catch (Exception ex)
             {
                 ex = _logger.Log(ex);
@@ -232,18 +248,17 @@ namespace SATI.BackOffice.Site.Controllers
         }
 
         // GET: CarouselController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                var carousel = _carouselServicio.BuscarPorId(id);
-                if (!carousel.Ok)
+                var carousel = await _carruselServicio.BuscarAsync(id);
+                if (carousel == null)
                 {
-                    TempData["warn"] = "El Carousel buscado no se encontró.";
+                    TempData["warn"] = "La Imagen buscada no se encontró.";
                 }
-                return View(carousel.DataItem);
+                return View(carousel);
             }
-
             catch (Exception ex)
             {
                 ex = _logger.Log(ex);
@@ -256,12 +271,13 @@ namespace SATI.BackOffice.Site.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePpal(int id)
+        public async Task<IActionResult> DeletePpal(int id)
         {
             try
             {
-                var res = _carouselServicio.Quitar(id);
-                if (res)
+                var respuesta = await _carruselServicio.EliminarAsync(id);
+
+                if (respuesta)
                 {
                     TempData["info"] = "Se Eliminó satisfactoriamente el Carousel";
                 }

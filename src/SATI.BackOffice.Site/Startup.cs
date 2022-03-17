@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using SATI.BackOffice.Core.ServicioExtensions;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
+using SATI.BackOffice.Site.Core.Extensiones;
 using System;
 using System.Globalization;
 

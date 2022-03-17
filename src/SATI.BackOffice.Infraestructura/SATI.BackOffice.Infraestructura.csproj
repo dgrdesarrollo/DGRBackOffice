@@ -19,8 +19,4 @@
     <PackageReference Include="X.PagedList.Mvc.Core" Version="8.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SATI.Entidades\SATI.Entidades.csproj" />
-  </ItemGroup>
-
 </Project>

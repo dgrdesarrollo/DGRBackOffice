@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using SATI.BackOffice.Infraestructura.Entidades;
+using SATI.BackOffice.Infraestructura.Entidades.Comunes;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SATI.BackOffice.Site.Controllers
 {
@@ -15,16 +21,18 @@ namespace SATI.BackOffice.Site.Controllers
             _options = options;
         }
 
-        //public int UltimoRegistro
-        //{
-        //    get { return HttpContext.Session.GetString("UltimoRegistro").ToInt(); }
-        //    set { HttpContext.Session.SetString("UltimoRegistro", value.ToString()); }
-        //}
-
-        public string ImagenEnEdicion
+        public List<dl_tipos> Tipos
         {
-            get { return HttpContext.Session.GetString("ImagenEnEdicion"); }
-            set { HttpContext.Session.SetString("ImagenEnEdicion", value); }
+            get
+            {
+                string lista = HttpContext.Session.GetString("Tipos");
+                return JsonConvert.DeserializeObject<List<dl_tipos>>(lista);
+            }
+            set
+            {
+                string lista = JsonConvert.SerializeObject(value);
+                HttpContext.Session.SetString("Tipos", lista);
+            }
         }
     }
 }

@@ -3,15 +3,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
-using SATI.BackOffice.Core.Servicios.Contrato;
+using Newtonsoft.Json;
 using SATI.BackOffice.Infraestructura.Entidades;
 using SATI.BackOffice.Infraestructura.Entidades.Comunes;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
 using SATI.BackOffice.Infraestructura.Helpers;
 using SATI.BackOffice.Infraestructura.Intefaces;
+using SATI.BackOffice.Site.Core.Servicios.Contratos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -21,28 +26,27 @@ namespace SATI.BackOffice.Site.Controllers
     {
         private readonly ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
-        private readonly INormativaLegalServicio _normativaLegalServicio;
-        private readonly ITipoNormativaServicio _tipoNormativaServicio;
-        private readonly IWebHostEnvironment _hosting;
+        private readonly INormaLegalServicio _normaLegalServicio;
+        private readonly ITipoNormaServicio _tipoNormaServicio;
 
-        public NormativaLegalController(INormativaLegalServicio normativaLegalServicio, ILoggerHelper logger,
-            IOptions<AppSettings> options, IWebHostEnvironment hosting, ITipoNormativaServicio tipoNormativaServicio) : base(options)
+        public NormativaLegalController(ILoggerHelper logger, IOptions<AppSettings> options,
+            INormaLegalServicio normaLegalServicio, ITipoNormaServicio tipoNormaServicio) : base(options)
         {
             _appSettings = options.Value;
             _logger = logger;
-            _normativaLegalServicio = normativaLegalServicio;
-            _hosting = hosting;
-            _tipoNormativaServicio = tipoNormativaServicio;
+            _normaLegalServicio = normaLegalServicio;
+            _tipoNormaServicio = tipoNormaServicio;
         }
 
         // GET: dl_documentosController
-        public IActionResult Index(string buscar, string sortdir = "ASC", string sort = "Orden", int page = 1)
+        public async Task<IActionResult> Index(string buscar, string sortdir = "ASC", string sort = "Orden", int page = 1, int dlt_id = 0)
         {
             try
             {
                 //string token = TokenCookie;
-                var grilla = Obtenerdl_documentossAsync(buscar, sortdir, sort, page);
+                var grilla = await Obtenerdl_documentossAsync(buscar, sortdir, sort, page, dlt_id);
                 ViewData["Title"] = "Administración de Normas Legales";
+                await CargarCombos(null);
                 return View(grilla);
             }
             catch (Exception ex)
@@ -54,35 +58,39 @@ namespace SATI.BackOffice.Site.Controllers
 
         }
 
-        private GridCore<dl_documentos> Obtenerdl_documentossAsync(string buscar, string sortdir, string sort, int page)
+        private async Task<GridCore<dl_documentos>> Obtenerdl_documentossAsync(string buscar, string sortdir, string sort, int page, int dlt_id)
         {
-            var dl_documentoss = _normativaLegalServicio.Buscar(new QueryFilters { Search = buscar, PageNumber = page, Sort = sort, SortDir = sortdir, PageSize = _appSettings.DefaultPageSize });
-            List<dl_documentos> entidades = dl_documentoss.ListaItems;
+            #region Invocación de la api
 
-            var lista = new StaticPagedList<dl_documentos>(entidades, page, dl_documentoss.CantidadReg, dl_documentoss.TotalRegs);
+
+            var respuesta = await _normaLegalServicio.BuscarAsync(new QueryFilters { Search = buscar, PageNumber = page, Sort = sort, SortDir = sortdir, PageSize = _appSettings.DefaultPageSize, IdRef = dlt_id });
+            #endregion
+
+            var meta = respuesta.Item2;
+            var lista = new StaticPagedList<dl_documentos>(respuesta.Item1, page, meta.PageSize, meta.TotalCount);
 
             return new GridCore<dl_documentos>()
             {
                 ListaDatos = lista,
-                CantidadReg = dl_documentoss.TotalRegs,
+                CantidadReg = meta.TotalCount,
                 PaginaActual = page,
-                CantidadPaginas = dl_documentoss.TotalRegs < _appSettings.DefaultPageSize ? 1 : dl_documentoss.TotalRegs / _appSettings.DefaultPageSize,
+                CantidadPaginas = meta.TatalPages,
                 Sort = sort,
                 SortDir = sortdir.Equals("ASC") ? "DESC" : "ASC"
             };
         }
 
         // GET: dl_documentosController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
             try
             {
-                var dl_documentos = _normativaLegalServicio.BuscarPorId(id);
-                if (!dl_documentos.Ok)
+                var norma = await _normaLegalServicio.BuscarAsync(id);
+                if (norma == null)
                 {
-                    TempData["warn"] = "El dl_documentos buscado no se encontró.";
+                    TempData["warn"] = "La Normativa buscada no se encontró.";
                 }
-                return View(dl_documentos.DataItem);
+                return View(norma);
             }
             catch (Exception ex)
             {
@@ -93,11 +101,11 @@ namespace SATI.BackOffice.Site.Controllers
         }
 
         // GET: dl_documentosController/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            CargarCombos(null);
+            await CargarCombos(null);
             ViewBag.Modulo = "C";
-            return View(new dl_documentos() { dl_fecha=DateTime.Today,dl_activo='S' });
+            return View(new dl_documentos() { dl_fecha = DateTime.Today, dl_activo = 'S' });
         }
 
         // POST: dl_documentosController/Create
@@ -125,14 +133,35 @@ namespace SATI.BackOffice.Site.Controllers
                 }
                 else
                 {
-                    var ruta = Path.Combine(_appSettings.RutaFiles, _appSettings.FolderNormaLeg);
-                    ruta += $"\\{datos.dl_file}";
-                    using (Stream fs = new FileStream(ruta, FileMode.Create))
+                    #region Invoco API y calculo ruta
+                    var tipo = Tipos.Where(x => x.dlt_id == datos.dlt_id).Distinct().SingleOrDefault();
+                    string ruta;
+                    if (tipo == null)
                     {
-                        await pdf.CopyToAsync(fs);
+                        ruta = await _normaLegalServicio.CalcularRuta("XX");
                     }
-                    var res = _normativaLegalServicio.Agregar(datos);
-                    if (res > 0)
+                    else
+                    {
+                        ruta = await _normaLegalServicio.CalcularRuta(tipo.dlt_descripcion);
+                    }
+                    #endregion
+
+                    #region se convierte la imagene en Base64                    
+                    MemoryStream ms = new();
+                    pdf.CopyTo(ms);
+                    var archB64 = Convert.ToBase64String(ms.ToArray());
+                    #endregion
+
+                    //cargamos el archivo en B64
+                    datos.Pdf = archB64;
+                    datos.UbicacionFisica = ruta;
+
+
+                    #region Subiendo archivo al repositorio a traves de la api
+                    var respuesta = await _normaLegalServicio.AgregarAsync(datos);
+                    #endregion
+
+                    if (respuesta)
                     {
                         TempData["info"] = "Se agrego satisfactoriamente la Normalegal";
                         return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "NormativaLegal", action = "Index" }));
@@ -149,23 +178,23 @@ namespace SATI.BackOffice.Site.Controllers
                 ex = _logger.Log(ex);
                 TempData["error"] = ex.Message;
             }
-            CargarCombos(datos);
+            ViewBag.Modulo = "C";
+            await CargarCombos(datos);
             return View(datos);
         }
 
         // GET: dl_documentosController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             try
             {
-                var dl_documentos = _normativaLegalServicio.BuscarPorId(id);
-                if (!dl_documentos.Ok)
+                var norma = await _normaLegalServicio.BuscarAsync(id);
+                if (norma == null)
                 {
-                    TempData["warn"] = "El dl_documentos buscado no se encontró.";
-                    return RedirectToAction("Index");
+                    TempData["warn"] = "La Normativa buscada no se encontró.";
                 }
-                CargarCombos(dl_documentos.DataItem);
-                return View(dl_documentos.DataItem);
+                await CargarCombos(norma);
+                return View(norma);
             }
             catch (Exception ex)
             {
@@ -199,15 +228,16 @@ namespace SATI.BackOffice.Site.Controllers
                 {
                     if (pdf != null)
                     {
-                        var ruta = Path.Combine(_appSettings.RutaFiles, _appSettings.FolderCarousel);
-                        ruta += $"\\{datos.dl_file}";
-                        using (Stream fs = new FileStream(ruta, FileMode.Create))
-                        {
-                            await pdf.CopyToAsync(fs);
-                        }
+                        #region se convierte la imagene en Base64                    
+                        MemoryStream ms = new();
+                        pdf.CopyTo(ms);
+                        var archB64 = Convert.ToBase64String(ms.ToArray());
+                        datos.Pdf = archB64;
+                        #endregion
                     }
-                    var res = _normativaLegalServicio.Actualizar(datos.dlt_id, datos);
-                    if (res > 0)
+                    var respuesta = await _normaLegalServicio.ActualizarAsync(datos.dl_id, datos);
+
+                    if (respuesta)
                     {
                         TempData["info"] = "Se Actualizo satisfactoriamente el dl_documentos";
                         return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "NormativaLegal", action = "Index" }));
@@ -223,21 +253,21 @@ namespace SATI.BackOffice.Site.Controllers
                 ex = _logger.Log(ex);
                 TempData["error"] = ex.Message;
             }
-            CargarCombos(datos);
+            await CargarCombos(datos);
             return View(datos);
         }
 
         // GET: dl_documentosController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                var dl_documentos = _normativaLegalServicio.BuscarPorId(id);
-                if (!dl_documentos.Ok)
+                var norma = await _normaLegalServicio.BuscarAsync(id);
+                if (norma == null)
                 {
-                    TempData["warn"] = "La Norma Legal buscada no se encontró.";
+                    TempData["warn"] = "La Normativa buscada no se encontró.";
                 }
-                return View(dl_documentos.DataItem);
+                return View(norma);
             }
 
             catch (Exception ex)
@@ -252,12 +282,12 @@ namespace SATI.BackOffice.Site.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePpal(int id)
+        public async Task<IActionResult> DeletePpal(int id)
         {
             try
             {
-                var res = _normativaLegalServicio.Quitar(id);
-                if (res)
+                var respuesta = await _normaLegalServicio.EliminarAsync(id);
+                if (respuesta)
                 {
                     TempData["info"] = "Se Eliminó satisfactoriamente la Norma Legal";
                 }
@@ -274,18 +304,22 @@ namespace SATI.BackOffice.Site.Controllers
             return RedirectToAction("Index", new RouteValueDictionary(new { area = "", controller = "NormativaLegal", action = "Index" }));
         }
 
-        private void CargarCombos(dl_documentos dl_documentos)
+        private async Task CargarCombos(dl_documentos dl_documentos)
         {
-            var dl_tipos = _tipoNormativaServicio.TraerTodo();
-            if (dl_tipos.Ok)
+            #region Invocación api tipo norma              
+            var respuesta = await _tipoNormaServicio.BuscarAsync();
+            #endregion
+
+            if (respuesta.Item1.Count > 0)
             {
+                Tipos = respuesta.Item1;
                 if (dl_documentos == null || (dl_documentos != null && dl_documentos.dlt_id == default))
                 {
-                    ViewBag.dlt_id = HelpersMVC<dl_tipos>.ListaGenerica(dl_tipos.ListaItems, "dlt_id", "dlt_descripcion");
+                    ViewBag.dlt_id = HelpersMVC<dl_tipos>.ListaGenerica(respuesta.Item1, "dlt_id", "dlt_descripcion");
                 }
                 else
                 {
-                    ViewBag.dlt_id = HelpersMVC<dl_tipos>.ListaGenerica(dl_tipos.ListaItems, "dlt_id", "dlt_descripcion", dl_documentos.dlt_id);
+                    ViewBag.dlt_id = HelpersMVC<dl_tipos>.ListaGenerica(respuesta.Item1, "dlt_id", "dlt_descripcion", dl_documentos.dlt_id);
                 }
             }
             else

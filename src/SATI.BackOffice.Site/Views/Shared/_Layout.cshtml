@@ -100,7 +100,7 @@
     </div>
 
     <partial name="Waiting" />
-    <partial name="Mensaje" />
+    <partial name="_Mensaje" />
 
 
     <script src="~/js/jquery-3.3.1.min.js"></script>
@@ -114,6 +114,41 @@
     <script src="~/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
     <script src="~/moment/moment.min.js"></script>
     <script src="~/bootstrap/gritter/js/jquery.gritter.min.js"></script>
+
+    <script type="text/javascript">
+         var MensajeErrorTempData = '@TempData["error"]';
+        var MensajeInfoTempData = '@TempData["info"]';
+        var MensajeWarnTempData = '@TempData["warn"]';
+        var MensajeSuccessTempData = '@TempData["succ"]';
+        var titulo = "";
+        var ejecutar = false;
+        var mensaje = "";
+        if (MensajeErrorTempData !== undefined || MensajeErrorTempData !== "") {
+            titulo = "Error";
+            ejecutar = true;
+            mensaje = MensajeErrorTempData;
+        } else if (MensajeInfoTempData !== undefined || MensajeInfoTempData !== "") {
+            titulo = "Información";
+            ejecutar = true;
+            mensaje = MensajeInfoTempData;
+        } else if (MensajeWarnTempData !== undefined || MensajeWarnTempData !== "") {
+            titulo = "Atención";
+            ejecutar = true;
+            mensaje = MensajeWarnTempData;
+        } else if (MensajeSuccessTempData !== undefined || MensajeSuccessTempData !== "") {
+            titulo = "Excelente";
+            ejecutar = true;
+            mensaje = MensajeSuccessTempData;
+        }
+
+        if (ejecutar === true) {
+            AbrirMensaje(titulo, mensaje, function (respuesta) {
+                $('#msjModal').modal('hide');
+            }, false, ["Aceptar"]); //["Aceptar", "Cancelar"]
+            return;
+        }
+
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

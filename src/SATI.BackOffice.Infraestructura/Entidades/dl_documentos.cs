@@ -23,5 +23,7 @@ namespace SATI.BackOffice.Infraestructura.Entidades
         public char dl_activo { get; set; }     
         public string Tipo { get; set; }
         public object Pdf { get; set; }
+        public string UbicacionFisica { get; set; }
+
     }
 }
