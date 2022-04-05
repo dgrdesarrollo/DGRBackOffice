@@ -66,7 +66,7 @@ namespace SATI.BackOffice.Site.Controllers
                 ListaDatos = lista,
                 CantidadReg = meta.TotalCount,
                 PaginaActual = page,
-                CantidadPaginas = meta.TatalPages,
+                CantidadPaginas = meta.TotalPages,
                 Sort = sort,
                 SortDir = sortdir.Equals("ASC") ? "DESC" : "ASC"
             };

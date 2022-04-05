@@ -28,6 +28,7 @@ namespace SATI.BackOffice.Infraestructura.Entidades
         [Range(minimum:0,maximum:99,ErrorMessage ="Solo se puede ingresar valores entre el 0 y el 99")]
         public int Orden { get; set; }
         public string UbicacionFisica { get; set; }
+        //propiedad auxiliar para auydar a la transportación del archivo en Base64
         public object Archivo { get; set; }
     }
 }

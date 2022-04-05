@@ -54,7 +54,7 @@ namespace SATI.BackOffice.API.Controllers
                 TotalCount = listaMetadata.TotalCount,
                 PageSize = listaMetadata.PageSize,
                 CurrentPage = listaMetadata.CurrentPage,
-                TatalPages = listaMetadata.TotalPages,
+                TotalPages = listaMetadata.TotalPages,
                 HasNextPage = listaMetadata.HasNextPage,
                 HasPreviousPage = listaMetadata.HasPreviousPage,
                 NextPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetNormas))).ToString(),

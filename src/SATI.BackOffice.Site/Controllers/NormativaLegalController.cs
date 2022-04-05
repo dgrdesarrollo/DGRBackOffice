@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using SATI.BackOffice.Infraestructura.Entidades;
 using SATI.BackOffice.Infraestructura.Entidades.Comunes;
 using SATI.BackOffice.Infraestructura.Entidades.Options;
@@ -12,11 +10,8 @@ using SATI.BackOffice.Infraestructura.Intefaces;
 using SATI.BackOffice.Site.Core.Servicios.Contratos;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -74,7 +69,7 @@ namespace SATI.BackOffice.Site.Controllers
                 ListaDatos = lista,
                 CantidadReg = meta.TotalCount,
                 PaginaActual = page,
-                CantidadPaginas = meta.TatalPages,
+                CantidadPaginas = meta.TotalPages,
                 Sort = sort,
                 SortDir = sortdir.Equals("ASC") ? "DESC" : "ASC"
             };
