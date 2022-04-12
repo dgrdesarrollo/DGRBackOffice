@@ -20,11 +20,11 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
     public class CarouselServicio : Servicio<Carousel>, ICarouselServicio
     {
-        private readonly ILoggerHelper _logger;
+       
         
-        public CarouselServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options)
+        public CarouselServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options,logger)
         {
-            _logger = logger;            
+            
         }
 
         public RespuestaGenerica<Carousel> Buscar(QueryFilters filters)
@@ -147,42 +147,6 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             var res = InvokarNQuery(sp, p);
             return res > 0;
         }
-
-        public string CalcularRuta(string codigoSistema)
-        {
-            var fecha = DateTime.Today;
-            string ruta = string.Empty;
-            if (string.IsNullOrWhiteSpace(codigoSistema))
-            {
-                codigoSistema = "XX";
-            }
-            //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
-            if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
-            {
-                ruta = $"{_appSettings.RutaFisica}\\Carrusel\\{codigoSistema}\\{fecha.Year}";
-            }
-            else
-            {
-                ruta = $"{_appSettings.RutaFisica}Carrusel\\{codigoSistema}\\{fecha.Year}";
-            }
-            //Genera directorio Año
-            GeneradorDeRuta(ruta);
-
-            //verificarmos que exista el directorio mes, sino lo crea
-            ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";            
-            //Genera directorio mes
-            GeneradorDeRuta(ruta);
-
-            //Verificamos si existe el directiro día, sino lo crea
-            ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
-            //Genera directorio dia
-            GeneradorDeRuta(ruta);
-
-            return ruta;
-        }
-
-       
-
         
     }
 }

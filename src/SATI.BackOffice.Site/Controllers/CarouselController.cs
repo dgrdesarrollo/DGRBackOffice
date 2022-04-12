@@ -149,7 +149,6 @@ namespace SATI.BackOffice.Site.Controllers
                     datos.Archivo = archB64;
                     datos.UbicacionFisica = ruta;
 
-
                     #region Subiendo archivo al repositorio a traves de la api
                     var respuesta = await _carruselServicio.AgregarAsync(datos);
                     #endregion

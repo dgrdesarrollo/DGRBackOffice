@@ -25,12 +25,12 @@
             Exception exception = _ex.HandleException(context.Exception);
             ExceptionValidation validation;
 
-            if (exception is SATIException)
+            if (context.Exception is BOException)
             {
                 validation = new ExceptionValidation
                 {
-                    Status = (int)HttpStatusCode.BadRequest,
-                    Title = "Bad Request",
+                    Status = (int)HttpStatusCode.Conflict,
+                    Title = "Atención",
                     Detail = exception.Message,
                 };
 
@@ -39,7 +39,21 @@
                 context.ExceptionHandled = true;
             }
 
-            if (exception is NotFoundException)
+            if (context.Exception is SATIException)
+            {
+                validation = new ExceptionValidation
+                {
+                    Status = (int)HttpStatusCode.Conflict,
+                    Title = "Atención",
+                    Detail = exception.Message,
+                };
+
+                context.Result = new BadRequestObjectResult(new { error = new[] { validation } });
+                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.ExceptionHandled = true;
+            }
+
+            if (context.Exception is NotFoundException)
             {
 
                 validation = new ExceptionValidation

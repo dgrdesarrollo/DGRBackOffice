@@ -18,12 +18,12 @@ using System.Threading.Tasks;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
-    public class NormativaLegalServicio:Servicio<dl_documentos>, INormativaLegalServicio
+    public class NormativaLegalServicio : Servicio<dl_documentos>, INormativaLegalServicio
     {
-        private readonly ILoggerHelper _logger;
-        public NormativaLegalServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options)
+
+        public NormativaLegalServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options, logger)
         {
-            _logger = logger;
+
 
         }
 
@@ -31,7 +31,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
             string sp = Constantes.StoredProcedures.NORMA_LEGAL_UPDATE;
-            List<string> excluir = new List<string> { "Tipo","Pdf" };
+            List<string> excluir = new List<string> { "Tipo", "Pdf" };
             List<SqlParameter> parametros = _repositorio.InferirParametros(entidad, excluir);
             int res = InvokarNQuery(sp, parametros);
             return res;
@@ -58,7 +58,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
             string sp = Constantes.StoredProcedures.NORMA_LEGAL_INSERT;
 
-            List<string> excluir = new List<string> { "dl_id", "Pdf","Tipo" };
+            List<string> excluir = new List<string> { "dl_id", "Pdf", "Tipo" };
             List<SqlParameter> parametros = _repositorio.InferirParametros(entidad, excluir);
             _logger.Log(TraceEventType.Information, $"Excluidos: {JsonConvert.SerializeObject(excluir)}");
             _logger.Log(TraceEventType.Information, $"Parametros: {JsonConvert.SerializeObject(parametros)}");
@@ -144,39 +144,39 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             }
         }
 
-        public string CalcularRuta(string codigoSistema)
-        {
-            var fecha = DateTime.Today;
-            string ruta = string.Empty;
-            if (string.IsNullOrWhiteSpace(codigoSistema))
-            {
-                codigoSistema = "XX";
-            }
-            //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
-            if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
-            {
-                ruta = $"{_appSettings.RutaFisica}\\Digesto\\{codigoSistema}\\{fecha.Year}";
-            }
-            else
-            {
-                ruta = $"{_appSettings.RutaFisica}Digesto\\{codigoSistema}\\{fecha.Year}";
-            }
-            //Genera directorio Año
-            GeneradorDeRuta(ruta);
+        //public string CalcularRuta(string codigoSistema)
+        //{
+        //    var fecha = DateTime.Today;
+        //    string ruta = string.Empty;
+        //    if (string.IsNullOrWhiteSpace(codigoSistema))
+        //    {
+        //        codigoSistema = "XX";
+        //    }
+        //    //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
+        //    if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
+        //    {
+        //        ruta = $"{_appSettings.RutaFisica}\\Digesto\\{codigoSistema}\\{fecha.Year}";
+        //    }
+        //    else
+        //    {
+        //        ruta = $"{_appSettings.RutaFisica}Digesto\\{codigoSistema}\\{fecha.Year}";
+        //    }
+        //    //Genera directorio Año
+        //    GeneradorDeRuta(ruta);
 
-            //verificarmos que exista el directorio mes, sino lo crea
-            ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";
-            //Genera directorio mes
-            GeneradorDeRuta(ruta);
+        //    //verificarmos que exista el directorio mes, sino lo crea
+        //    ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";
+        //    //Genera directorio mes
+        //    GeneradorDeRuta(ruta);
 
-            //Verificamos si existe el directiro día, sino lo crea
-            ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
-            //Genera directorio dia
-            GeneradorDeRuta(ruta);
+        //    //Verificamos si existe el directiro día, sino lo crea
+        //    ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
+        //    //Genera directorio dia
+        //    GeneradorDeRuta(ruta);
 
 
-            return ruta;
-        }
+        //    return ruta;
+        //}
 
         public bool Quitar(object Id)
         {

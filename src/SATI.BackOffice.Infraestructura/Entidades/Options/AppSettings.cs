@@ -10,6 +10,6 @@
         public string URLBase { get; set; }
         public string RutaFisica { get; set; }
         public int FileSize { get; set; }
-
+        public string Extensiones { get; set; }
     }
 }

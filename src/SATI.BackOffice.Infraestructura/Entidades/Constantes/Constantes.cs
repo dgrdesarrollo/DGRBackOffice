@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SATI.BackOffice.Infraestructura
+﻿namespace SATI.BackOffice.Infraestructura
 {
     public static class Constantes
     {
@@ -25,6 +19,14 @@ namespace SATI.BackOffice.Infraestructura
             public const string NORMA_LEGAL_INSERT = "spBackOffice_dl_documentosInsert";
             public const string NORMA_LEGAL_UPDATE = "spBackOffice_dl_documentosUpdate";
             public const string NORMA_LEGAL_DELETE = "spBackOffice_dl_documentosDelete";
+
+            //EArchivo
+            public const string EARCHIVO_GET_COUNT = "spBackOffice_EArchivoCantidadRegistros";
+            public const string EARCHIVO_GET_ALL = "spBackOffice_EArchivoGetAll";
+            public const string EARCHIVO_GET_BY_ID = "spBackOffice_EArchivoGetById";
+            public const string EARCHIVO_INSERT = "spBackOffice_EArchivoInsert";
+            public const string EARCHIVO_UPDATE = "spBackOffice_EArchivoUpdate";
+            public const string EARCHIVO_DELETE = "spBackOffice_EArchivoDelete";
         }
 
         public static class MensajesError
@@ -37,6 +39,8 @@ namespace SATI.BackOffice.Infraestructura
             public const string NORMA_LEGAL_REGISTROS_NO_ENCONTRADOS = "No se encontraron registros de Normas Legales. Verifique.";
             public const string NORMA_LEGAL_REGISTRO_NO_ENCONTRADO = "No se encontró el registro de Norma Legal. Verifique.";
 
+            public const string EARCHIVO_REGISTROS_NO_ENCONTRADOS = "No se encontraron archivos para el sistema @codSistema. Verifique.";
+            public const string EARCHIVO_REGISTRO_NO_ENCONTRADO = "No se encontró el archivo del sistema @codSistema. Verifique.";
 
         }
     }

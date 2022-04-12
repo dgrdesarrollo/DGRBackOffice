@@ -12,12 +12,10 @@ using System.Reflection;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
-    public class TipoNormativaServicio:Servicio<dl_tipos>, ITipoNormativaServicio
+    public class TipoNormativaServicio : Servicio<dl_tipos>, ITipoNormativaServicio
     {
-        private readonly ILoggerHelper _logger;
-        public TipoNormativaServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options)
+        public TipoNormativaServicio(IUnitOfWork uow, IOptions<AppSettings> options, ILoggerHelper logger) : base(uow, options, logger)
         {
-            _logger = logger;
         }
 
         public RespuestaGenerica<dl_tipos> Buscar(QueryFilters filters)
@@ -33,7 +31,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         public RespuestaGenerica<dl_tipos> TraerTodo()
         {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
-            
+
             var sp = Constantes.StoredProcedures.TIPO_NORMATIVA_GET_ALL;
             SqlParameter parametro = null;
             var tipos = InvokarSp2Lst(sp, parametro);

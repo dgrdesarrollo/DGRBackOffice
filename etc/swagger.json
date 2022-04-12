@@ -1,0 +1,1128 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SATI - BackOffice",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/BOArchivo": {
+      "get": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "operationId": "GetArchivos",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Todo": {
+                    "type": "boolean"
+                  },
+                  "Id": { },
+                  "IdRef": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IdG": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "Search": {
+                    "type": "string"
+                  },
+                  "PageSize": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "PageNumber": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Sort": {
+                    "type": "string"
+                  },
+                  "SortDir": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "Todo": {
+                  "style": "form"
+                },
+                "Id": {
+                  "style": "form"
+                },
+                "IdRef": {
+                  "style": "form"
+                },
+                "IdG": {
+                  "style": "form"
+                },
+                "Date": {
+                  "style": "form"
+                },
+                "Search": {
+                  "style": "form"
+                },
+                "PageSize": {
+                  "style": "form"
+                },
+                "PageNumber": {
+                  "style": "form"
+                },
+                "Sort": {
+                  "style": "form"
+                },
+                "SortDir": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EArchivoIEnumerableApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "parameters": [
+          {
+            "name": "esTemporal",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOArchivo/GetIdTemp/{codigoSistema}": {
+      "get": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "parameters": [
+          {
+            "name": "codigoSistema",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOArchivo/{id}": {
+      "get": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "BOArchivo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EArchivo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOCarrusel": {
+      "get": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "operationId": "GetCarousel",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Todo": {
+                    "type": "boolean"
+                  },
+                  "Id": { },
+                  "IdRef": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "IdG": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "Search": {
+                    "type": "string"
+                  },
+                  "PageSize": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "PageNumber": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Sort": {
+                    "type": "string"
+                  },
+                  "SortDir": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "Todo": {
+                  "style": "form"
+                },
+                "Id": {
+                  "style": "form"
+                },
+                "IdRef": {
+                  "style": "form"
+                },
+                "IdG": {
+                  "style": "form"
+                },
+                "Date": {
+                  "style": "form"
+                },
+                "Search": {
+                  "style": "form"
+                },
+                "PageSize": {
+                  "style": "form"
+                },
+                "PageNumber": {
+                  "style": "form"
+                },
+                "Sort": {
+                  "style": "form"
+                },
+                "SortDir": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarouselIEnumerableApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOCarrusel/CalcularRuta/{codigoSistema}": {
+      "get": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "parameters": [
+          {
+            "name": "codigoSistema",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOCarrusel/{id}": {
+      "get": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "BOCarrusel"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Carousel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BONorma": {
+      "get": {
+        "tags": [
+          "BONorma"
+        ],
+        "operationId": "GetNormas",
+        "parameters": [
+          {
+            "name": "Todo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Id",
+            "in": "query",
+            "schema": { }
+          },
+          {
+            "name": "IdRef",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "IdG",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDir",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/dl_documentosIEnumerableApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dl_documentosIEnumerableApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dl_documentosIEnumerableApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BONorma"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BONorma"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BONorma/CalcularRuta/{codigoSistema}": {
+      "get": {
+        "tags": [
+          "BONorma"
+        ],
+        "parameters": [
+          {
+            "name": "codigoSistema",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BONorma/{id}": {
+      "get": {
+        "tags": [
+          "BONorma"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "BONorma"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/dl_documentos"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BOTipoNorma": {
+      "get": {
+        "tags": [
+          "BOTipoNorma"
+        ],
+        "operationId": "GetTiposNorma",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dl_tiposIEnumerableApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Carousel": {
+        "required": [
+          "descripcion",
+          "orden",
+          "textoLink",
+          "url",
+          "vigenciaDesde",
+          "vigenciaHasta"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "vigenciaDesde": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "vigenciaHasta": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "imagen": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string"
+          },
+          "textoLink": {
+            "type": "string"
+          },
+          "orden": {
+            "maximum": 99,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "ubicacionFisica": {
+            "type": "string",
+            "nullable": true
+          },
+          "archivo": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CarouselIEnumerableApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Carousel"
+            },
+            "nullable": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EArchivo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "codigoSistema": {
+            "type": "string",
+            "nullable": true
+          },
+          "claveRelacion": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoEDocumentoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estadoEDocumentoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requerimientoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "solicitudId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoSolicitudId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cuit": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreArchivo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "ruta": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaIndexacion": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hash": {
+            "type": "string",
+            "nullable": true
+          },
+          "archivo": {
+            "nullable": true
+          },
+          "claveTemporal": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EArchivoIEnumerableApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EArchivo"
+            },
+            "nullable": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Metadata": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "nextPageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "previousPageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "dl_documentos": {
+        "type": "object",
+        "properties": {
+          "dl_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dlt_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dl_fecha": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dl_titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "dl_nota": {
+            "type": "string",
+            "nullable": true
+          },
+          "dl_file": {
+            "type": "string",
+            "nullable": true
+          },
+          "dl_activo": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string",
+            "nullable": true
+          },
+          "pdf": {
+            "nullable": true
+          },
+          "ubicacionFisica": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "dl_documentosIEnumerableApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dl_documentos"
+            },
+            "nullable": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "additionalProperties": false
+      },
+      "dl_tipos": {
+        "type": "object",
+        "properties": {
+          "dlt_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dlt_descripcion": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "dl_tiposIEnumerableApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dl_tipos"
+            },
+            "nullable": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Metadata"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

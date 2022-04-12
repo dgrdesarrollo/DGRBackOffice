@@ -24,6 +24,7 @@ namespace SATI.BackOffice.Core.ServicioExtensions
             services.AddScoped<ICarouselServicio, CarouselServicio>();
             services.AddScoped<INormativaLegalServicio, NormativaLegalServicio>();
             services.AddScoped<ITipoNormativaServicio, TipoNormativaServicio>();
+            services.AddScoped<IEArchivoServicio, EArchivoServicio>();
 
             services.AddScoped<ILoggerHelper, LoggerHelper>();
 
