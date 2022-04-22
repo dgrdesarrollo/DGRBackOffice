@@ -75,18 +75,18 @@ namespace SATI.BackOffice.Site.Core.Servicios.Implementaciones
                 HttpClient client = helperAPI.InicializaCliente();
 
                 HttpResponseMessage response;
-                if (filters.Todo)
-                {
-                    response = await client.GetAsync($"{appSettings.URLBase}{_rutaEntidad}");
-                    _logger.Log(TraceEventType.Information, $"Response: {JsonConvert.SerializeObject(response)}");
-                }
-                else
-                {
+                //if (filters.Todo)
+                //{
+                //    response = await client.GetAsync($"{appSettings.URLBase}{_rutaEntidad}");
+                //    _logger.Log(TraceEventType.Information, $"Response: {JsonConvert.SerializeObject(response)}");
+                //}
+                //else
+                //{
                     var link = $"{appSettings.URLBase}{_rutaEntidad}?{EvaluarQueryFilter(filters)}";
 
                     response = await client.GetAsync(link);
                     _logger.Log(TraceEventType.Information, $"Response: {JsonConvert.SerializeObject(response)}");
-                }
+                //}
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

@@ -1,4 +1,4 @@
-﻿namespace SATI.BackOffice.Infraestructura.Entidades
+﻿namespace SATI.BackOffice.WS.Infra.Entidades
 {
     public class Confirmacion
     {

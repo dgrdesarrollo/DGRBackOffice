@@ -37,6 +37,7 @@
                 context.Result = new BadRequestObjectResult(new { error = new[] { validation } });
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.ExceptionHandled = true;
+                return;
             }
 
             if (context.Exception is SATIException)
@@ -51,6 +52,7 @@
                 context.Result = new BadRequestObjectResult(new { error = new[] { validation } });
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.ExceptionHandled = true;
+                return;
             }
 
             if (context.Exception is NotFoundException)
@@ -67,6 +69,7 @@
                 context.Result = new NotFoundObjectResult(new { error = new[] { validation } });
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 context.ExceptionHandled = true;
+                return;
             }
 
             

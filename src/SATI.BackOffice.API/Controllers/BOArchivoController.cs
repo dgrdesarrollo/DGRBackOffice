@@ -101,7 +101,7 @@ namespace SATI.BackOffice.API.Controllers
         public IActionResult Get(Guid id)
         {
             _logger.LogInformation($"{this.GetType().Name} - {MethodBase.GetCurrentMethod().Name}");
-            RespuestaGenerica<EArchivo> car = _eArchivoServicio.BuscarPorId(id);
+            RespuestaGenerica<EArchivo> car = _eArchivoServicio.BuscarPorId(id,false);
 
             ApiResponse<EArchivo> resp = new ApiResponse<EArchivo>(car.DataItem);
             return Ok(resp);
@@ -109,10 +109,21 @@ namespace SATI.BackOffice.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult GetNoUrl(Guid id,bool noUrl)
+        public IActionResult GetNoUrl(Guid id, bool noUrl)
         {
             _logger.LogInformation($"{this.GetType().Name} - {MethodBase.GetCurrentMethod().Name}");
-            RespuestaGenerica<EArchivo> car = _eArchivoServicio.BuscarPorId(id,noUrl);
+            RespuestaGenerica<EArchivo> car = _eArchivoServicio.BuscarPorId(id, noUrl);
+
+            ApiResponse<EArchivo> resp = new ApiResponse<EArchivo>(car.DataItem);
+            return Ok(resp);
+        }
+
+        [HttpGet]
+        [Route("[action]/{id:Guid}")]
+        public IActionResult GetFileB64(Guid id)
+        {
+            _logger.LogInformation($"{this.GetType().Name} - {MethodBase.GetCurrentMethod().Name}");
+            RespuestaGenerica<EArchivo> car = _eArchivoServicio.BuscarPorId(id, true, true);
 
             ApiResponse<EArchivo> resp = new ApiResponse<EArchivo>(car.DataItem);
             return Ok(resp);

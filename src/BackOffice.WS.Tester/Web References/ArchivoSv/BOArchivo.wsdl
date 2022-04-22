@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://boarchivo.dgr.gov.ar/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://boarchivo.dgr.gov.ar/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://boarchivo.dgr.gov.ar/">
+      <s:import namespace="http://microsoft.com/wsdl/types/" />
+      <s:element name="GetArchivos">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="filters" type="tns:QueryFilters" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="QueryFilters">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Id" />
+          <s:element minOccurs="1" maxOccurs="1" name="IdRef" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IdG" type="s1:guid" />
+          <s:element minOccurs="1" maxOccurs="1" name="Date" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CUIT" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Search" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PageSize" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PageNumber" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sort" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SortDir" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RespuestaGenericaOfEArchivo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Ok" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MensajeOriginal" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NroEntidadesObtenidasOModificadas" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ListaItems" type="tns:ArrayOfEArchivo" />
+          <s:element minOccurs="0" maxOccurs="1" name="DataItem" type="tns:EArchivo" />
+          <s:element minOccurs="1" maxOccurs="1" name="TotalRegs" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CantidadReg" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Pagina" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfEArchivo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="EArchivo" nillable="true" type="tns:EArchivo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="EArchivo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id" type="s1:guid" />
+          <s:element minOccurs="0" maxOccurs="1" name="CodigoSistema" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="EstadoEArchivoId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="RequerimientoId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SolicitudId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TipoSolicitud" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CUIT" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NombreArchivo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descripcion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ruta" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FechaIndexacion" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Hash" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Archivo" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClaveTemporal" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetArchivosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetArchivosResult" type="tns:RespuestaGenericaOfEArchivo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetArchivo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id" type="s1:guid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetArchivoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetArchivoResult" type="tns:RespuestaGenericaOfEArchivo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetArchivoNoUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id" type="s1:guid" />
+            <s:element minOccurs="1" maxOccurs="1" name="noUrl" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetArchivoNoUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetArchivoNoUrlResult" type="tns:RespuestaGenericaOfEArchivo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AgregarArchivo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="entidad" type="tns:EArchivo" />
+            <s:element minOccurs="1" maxOccurs="1" name="esTemporal" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaGenericaOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Ok" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MensajeOriginal" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NroEntidadesObtenidasOModificadas" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ListaItems" type="tns:ArrayOfBoolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="DataItem" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="TotalRegs" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CantidadReg" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Pagina" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AgregarArchivoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AgregarArchivoResult" type="tns:RespuestaGenericaOfBoolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConfirmarArchivos">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="entidad" type="tns:Confirmacion" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Confirmacion">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ClaveTemporal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SolicitudId" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConfirmarArchivosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConfirmarArchivosResult" type="tns:RespuestaGenericaOfBoolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIdTemp">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="codSistema" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RespuestaGenericaOfString">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Ok" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MensajeOriginal" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NroEntidadesObtenidasOModificadas" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ListaItems" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="DataItem" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TotalRegs" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CantidadReg" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Pagina" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetIdTempResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIdTempResult" type="tns:RespuestaGenericaOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://microsoft.com/wsdl/types/">
+      <s:simpleType name="guid">
+        <s:restriction base="s:string">
+          <s:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+        </s:restriction>
+      </s:simpleType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetArchivosSoapIn">
+    <wsdl:part name="parameters" element="tns:GetArchivos" />
+  </wsdl:message>
+  <wsdl:message name="GetArchivosSoapOut">
+    <wsdl:part name="parameters" element="tns:GetArchivosResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetArchivoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetArchivo" />
+  </wsdl:message>
+  <wsdl:message name="GetArchivoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetArchivoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetArchivoNoUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetArchivoNoUrl" />
+  </wsdl:message>
+  <wsdl:message name="GetArchivoNoUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetArchivoNoUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="AgregarArchivoSoapIn">
+    <wsdl:part name="parameters" element="tns:AgregarArchivo" />
+  </wsdl:message>
+  <wsdl:message name="AgregarArchivoSoapOut">
+    <wsdl:part name="parameters" element="tns:AgregarArchivoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmarArchivosSoapIn">
+    <wsdl:part name="parameters" element="tns:ConfirmarArchivos" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmarArchivosSoapOut">
+    <wsdl:part name="parameters" element="tns:ConfirmarArchivosResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIdTempSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIdTemp" />
+  </wsdl:message>
+  <wsdl:message name="GetIdTempSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIdTempResponse" />
+  </wsdl:message>
+  <wsdl:portType name="BOArchivoSoap">
+    <wsdl:operation name="GetArchivos">
+      <wsdl:input message="tns:GetArchivosSoapIn" />
+      <wsdl:output message="tns:GetArchivosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obtener el archivo solicitado según el Id que se envíe</wsdl:documentation>
+      <wsdl:input message="tns:GetArchivoSoapIn" />
+      <wsdl:output message="tns:GetArchivoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivoNoUrl">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obtener el archivo solicitado según el Id que se envíe. Se puede definir adicionalmente si se desea que la ruta sea una URL o una ruta física.</wsdl:documentation>
+      <wsdl:input message="tns:GetArchivoNoUrlSoapIn" />
+      <wsdl:output message="tns:GetArchivoNoUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AgregarArchivo">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Alta de un archivo</wsdl:documentation>
+      <wsdl:input message="tns:AgregarArchivoSoapIn" />
+      <wsdl:output message="tns:AgregarArchivoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmarArchivos">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Se confirman los archivos upload temporalmente.</wsdl:documentation>
+      <wsdl:input message="tns:ConfirmarArchivosSoapIn" />
+      <wsdl:output message="tns:ConfirmarArchivosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIdTemp">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Se obtienen una clave temporal para el alta de archivos.</wsdl:documentation>
+      <wsdl:input message="tns:GetIdTempSoapIn" />
+      <wsdl:output message="tns:GetIdTempSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BOArchivoSoap" type="tns:BOArchivoSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetArchivos">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivo">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivoNoUrl">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivoNoUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AgregarArchivo">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/AgregarArchivo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmarArchivos">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/ConfirmarArchivos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIdTemp">
+      <soap:operation soapAction="http://boarchivo.dgr.gov.ar/GetIdTemp" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BOArchivoSoap12" type="tns:BOArchivoSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetArchivos">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivos" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivo">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetArchivoNoUrl">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/GetArchivoNoUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AgregarArchivo">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/AgregarArchivo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmarArchivos">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/ConfirmarArchivos" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIdTemp">
+      <soap12:operation soapAction="http://boarchivo.dgr.gov.ar/GetIdTemp" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BOArchivo">
+    <wsdl:port name="BOArchivoSoap" binding="tns:BOArchivoSoap">
+      <soap:address location="http://localhost:9080/BOArchivo.asmx" />
+    </wsdl:port>
+    <wsdl:port name="BOArchivoSoap12" binding="tns:BOArchivoSoap12">
+      <soap12:address location="http://localhost:9080/BOArchivo.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

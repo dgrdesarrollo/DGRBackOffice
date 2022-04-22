@@ -12,6 +12,7 @@ using SATI.BackOffice.Infraestructura.Exceptions;
 using System.Diagnostics;
 using System.Linq;
 using SATI.BackOffice.Infraestructura.Entidades;
+using System.Text;
 
 namespace SATI.BackOffice.Core.Servicios.Implementacion
 {
@@ -82,28 +83,43 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         public string GeneradorNombreTemporalArchivo(string codigoSistema,string cuit,int reqId,string extArchivo, string ClaveTemporal)
         {
             #region Validación Formación del Nombre del Archivo
-
+            StringBuilder texto = new();
+            bool first = true;
             bool error = false;
             if(string.IsNullOrWhiteSpace(codigoSistema) || codigoSistema.Length != 3)
             {
+                texto.Append("Error en Codigo de Sistema. Debe tener 3 caractes alfanumericos.");
+                first = false;
                 error = true;
             }
             if (string.IsNullOrWhiteSpace(cuit) || cuit.Length != 11)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en CUIT. 11 digitos debe tener.");
                 error = true;
             }
-            if(reqId==0 || reqId.ToString().Length > 3)
+            if (cuit.ToLong().ToString().Length != 11)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en CUIT. Existen caracteres");
+                error = true;
+            }
+            if (reqId==0 || reqId.ToString().Length > 3)
+            {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en Requerimiento. No se especificó.");
                 error = true;
             }
             if (!extensiones.Contains(extArchivo))
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append($"La extensión {extArchivo} no es admitida.");
                 error = true;
             }
             if (error)
             {
                 _logger.Log(TraceEventType.Warning, $"Parámetros: codigoSistema: {codigoSistema}, numeroCuenta: {cuit}, reqId: {reqId}, extArchivo: {extArchivo} ");
-                throw new BOException("Alguno de los parametros detinados a la conformación del nombre del archivo no son validos. Verificar también la extensión del archivo!!");
+                throw new BOException($"Alguno de los parametros detinados a la conformación del nombre del archivo no son validos. {texto}");
             }
             #endregion
 
@@ -114,18 +130,31 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         {
 
             #region Validación Formación del Nombre del Archivo
-
+            StringBuilder texto = new();
+            bool first = true;
             bool error = false;
             if (string.IsNullOrWhiteSpace(codigoSistema) || codigoSistema.Length != 3)
             {
+                texto.Append("Error en Codigo de Sistema. Debe tener 3 caractes alfanumericos.");
+                first = false;
                 error = true;
             }
             if (string.IsNullOrWhiteSpace(cuit) || cuit.Length != 11)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en CUIT. 11 digitos debe tener.");
+                error = true;
+            }
+            if (cuit.ToLong().ToString().Length != 11)
+            {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en CUIT. Existen caracteres");
                 error = true;
             }
             if (string.IsNullOrWhiteSpace(solicitudId) || solicitudId.Length > 10)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en Solicitud. Longitud de la solicitud mayor a 10 digitos");
                 error = true;
             }
             if (solicitudId.Length < 10)
@@ -134,16 +163,20 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             }
             if (string.IsNullOrWhiteSpace(tipoSolicitudId) || tipoSolicitudId.Length != 3)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en tipoSolicitudId.");
                 error = true;
             }
             if (reqId == 0 || reqId.ToString().Length > 3)
             {
+                if (first) { first = false; } else { texto.Append('-'); }
+                texto.Append("Error en Requerimiento. No se especificó.");
                 error = true;
             }        
             if (error)
             {
                 _logger.Log(TraceEventType.Warning, $"Parámetros: codigoSistema: {codigoSistema}, numeroCuenta: {cuit}, reqId: {reqId}, extArchivo: {extArchivo} ");
-                throw new BOException("Alguno de los parametros detinados a la conformación del nombre del archivo no son validos. Verificar también la extensión del archivo!!");
+                throw new BOException($"Alguno de los parametros detinados a la conformación del nombre del archivo no son validos. {texto}");
             }
             #endregion
 

@@ -70,6 +70,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
         public RespuestaGenerica<dl_documentos> Buscar(QueryFilters filters)
         {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
+            _logger.Log(TraceEventType.Information, $"Parametros: {JsonConvert.SerializeObject(filters)}");
             filters.PageNumber = filters.PageNumber == 0 ? _appSettings.DefaultPageNumber : filters.PageNumber;
             filters.PageSize = filters.PageSize == 0 ? _appSettings.DefaultPageSize : filters.PageSize;
 
@@ -77,7 +78,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             if (string.IsNullOrWhiteSpace(filters.SortDir)) { filters.SortDir = "ASC"; }
 
             var sp = Constantes.StoredProcedures.NORMA_LEGAL_GET_COUNT;
-            List<SqlParameter> parametros = new List<SqlParameter>();
+            List<SqlParameter> parametros = new();
 
             var res = InvokarSpScalar(sp, parametros);
             var cantidad = res.ToString().ToInt();
@@ -139,45 +140,11 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             else
             {
                 var car = registro.First();
-                _logger.Log(TraceEventType.Information, $"Registro Encontrado - Carousel: {JsonConvert.SerializeObject(car)} - SP: {sp}");
+                
                 return new RespuestaGenerica<dl_documentos> { Ok = true, DataItem = car };
             }
         }
-
-        //public string CalcularRuta(string codigoSistema)
-        //{
-        //    var fecha = DateTime.Today;
-        //    string ruta = string.Empty;
-        //    if (string.IsNullOrWhiteSpace(codigoSistema))
-        //    {
-        //        codigoSistema = "XX";
-        //    }
-        //    //se calcula la ruta segun la ruta base y teniendo en cuenta que es carousel
-        //    if (!_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
-        //    {
-        //        ruta = $"{_appSettings.RutaFisica}\\Digesto\\{codigoSistema}\\{fecha.Year}";
-        //    }
-        //    else
-        //    {
-        //        ruta = $"{_appSettings.RutaFisica}Digesto\\{codigoSistema}\\{fecha.Year}";
-        //    }
-        //    //Genera directorio Año
-        //    GeneradorDeRuta(ruta);
-
-        //    //verificarmos que exista el directorio mes, sino lo crea
-        //    ruta += $"\\{fecha.Month.ToString().PadLeft(2, '0')}";
-        //    //Genera directorio mes
-        //    GeneradorDeRuta(ruta);
-
-        //    //Verificamos si existe el directiro día, sino lo crea
-        //    ruta += $"\\{fecha.Day.ToString().PadLeft(2, '0')}";
-        //    //Genera directorio dia
-        //    GeneradorDeRuta(ruta);
-
-
-        //    return ruta;
-        //}
-
+ 
         public bool Quitar(object Id)
         {
             throw new NotImplementedException();

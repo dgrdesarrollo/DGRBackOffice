@@ -1,13 +1,15 @@
-﻿using SATI.BackOffice.Infraestructura.Intefaces;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SATI.BackOffice.Infraestructura.Entidades
+namespace SATI.BackOffice.WS.Infra.Entidades
 {
-    public class EArchivo : IEntidades
+    public class EArchivo
     {
         public string Id { get; set; }
         public string CodigoSistema { get; set; }
-       // public string ClaveRelacion { get; set; }
         public int EstadoEArchivoId { get; set; }
         public int RequerimientoId { get; set; }
         public string SolicitudId { get; set; }
@@ -18,7 +20,7 @@ namespace SATI.BackOffice.Infraestructura.Entidades
         public string Ruta { get; set; }
         public DateTime FechaIndexacion { get; set; }
         public string Hash { get; set; }
-        public object Archivo { get; set; }
+        public string Archivo { get; set; }
         /// <summary>
         /// Este campo tiene un long de 18 digitos. Corresponde a un Ticks
         /// </summary>

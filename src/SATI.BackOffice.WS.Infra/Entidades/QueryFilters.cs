@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SATI.BackOffice.Infraestructura.Entidades.Comunes
+namespace SATI.BackOffice.WS.Infra.Entidades
 {
-    public class QueryFilters 
-    {        
+    public class QueryFilters
+    {
         public string Id { get; set; }
         public int? IdRef { get; set; }
         //public Guid IdG { get; set; }
@@ -19,6 +19,5 @@ namespace SATI.BackOffice.Infraestructura.Entidades.Comunes
         public int PageNumber { get; set; }
         public string Sort { get; set; }
         public string SortDir { get; set; }
-
     }
 }

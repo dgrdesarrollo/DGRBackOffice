@@ -9,7 +9,7 @@ namespace SATI.BackOffice.Core.Servicios.Contrato
         string CalcularRuta(string codigoSistema);
         Task<int> AgregarAsync(EArchivo entidad, bool esTemporal);
         Task<int> AgregarDBAsync(EArchivo entidad);
-        RespuestaGenerica<EArchivo> BuscarPorId(object id, bool generarUrl = true);
+        RespuestaGenerica<EArchivo> BuscarPorId(object id, bool generarUrl = true,bool getB64=false);
         bool ConfirmarArchivos(Confirmacion confirmacion);
     }
 }

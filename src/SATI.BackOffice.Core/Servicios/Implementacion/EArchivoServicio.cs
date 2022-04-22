@@ -40,11 +40,23 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
         public async Task<int> AgregarAsync(EArchivo entidad, bool esTemporal)
         {
+            var entemp = entidad;
+            entemp.Archivo = string.Empty;
+            _logger.Log(TraceEventType.Information, JsonConvert.SerializeObject(entemp));
+
             entidad.CodigoSistema = entidad.CodigoSistema.ToUpper();
-            entidad.Id = Guid.NewGuid();
+            entidad.Id = Guid.NewGuid().ToString();
             //inicialmente se procede a calcular la ruta donde se almacenará el archivo
             var ruta = CalcularRuta(entidad.CodigoSistema);
+            if (string.IsNullOrWhiteSpace(entidad.NombreArchivo))
+            {
+                throw new BOException("No se ha especificado el nombre del archivo.");
+            }
             var ext = entidad.NombreArchivo.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            if (ext.Length == 1)
+            {
+                throw new BOException("El nombre del archivo no especifica la extensión. Verifique. ");
+            }
 
             if (esTemporal) { entidad.EstadoEArchivoId = (int)EstadoArchivo.PENDIENTE; }
             else { entidad.EstadoEArchivoId = (int)EstadoArchivo.CONFIRMADO; }
@@ -60,12 +72,23 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
             //se procede a guardar el archivo en la ruta especificada
             #region Guardar archivo desde B64 a disco
-            var archBytes = Convert.FromBase64String(entidad.Archivo.ToString());
+
+            byte[] archBytes;
+
+            archBytes = Convert.FromBase64String(entidad.Archivo.ToString());
+
+
             MemoryStream ms = new MemoryStream(archBytes);
             using (Stream fs = new FileStream($"{ruta}\\{nn}", FileMode.Create))
             {
                 await ms.CopyToAsync(fs);
             }
+
+            #endregion
+
+            #region Reacondicionamiento de la ruta - Se quita la porción del servidor 
+
+            entidad.Ruta = entidad.Ruta.Replace(_appSettings.RutaFisica, "");
 
             #endregion
 
@@ -83,6 +106,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
         public RespuestaGenerica<EArchivo> Buscar(QueryFilters filters)
         {
+
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
             filters.PageNumber = filters.PageNumber == 0 ? _appSettings.DefaultPageNumber : filters.PageNumber;
             filters.PageSize = filters.PageSize == 0 ? _appSettings.DefaultPageSize : filters.PageSize;
@@ -104,15 +128,40 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                 return new RespuestaGenerica<EArchivo> { Ok = false, Mensaje = Constantes.MensajesError.CAROUSEL_REGISTROS_NO_ENCONTRADOS.Replace("@codSistema", filters.Search) };
             }
 
+
             sp = Constantes.StoredProcedures.EARCHIVO_GET_ALL;
-            parametros = new List<SqlParameter> {
-                new SqlParameter("@codSistema", string.IsNullOrWhiteSpace(filters.Search)?DBNull.Value:filters.Search),
-                new SqlParameter("@id", filters.Id!=default?filters.Id:DBNull.Value),
-                new SqlParameter("@fechaDesde", filters.Date.HasValue?filters.Date.Value:DBNull.Value),
-                new SqlParameter("@fechaHasta", filters.Date.HasValue?filters.Date.Value.AddDays(1):DBNull.Value),
-                new SqlParameter("@claveTemporal", DBNull.Value),
-                new SqlParameter("@size", filters.PageSize),
-                new SqlParameter("@Pagina", filters.PageNumber) };
+
+            parametros = new List<SqlParameter>();
+            if (filters.Id != default)
+            {
+                parametros.Add(new SqlParameter("@id", filters.Id));
+            }
+            if (filters.IdRef != default)
+            {
+                parametros.Add(new SqlParameter("@IdRef", filters.IdRef));
+            }
+            if (filters.Date.HasValue)
+            {
+                parametros.Add(new SqlParameter("@Date", filters.Date.Value));
+            }
+            if (!string.IsNullOrWhiteSpace(filters.FileName))
+            {
+                parametros.Add(new SqlParameter("@FileName", filters.FileName));
+            }
+            if (!string.IsNullOrWhiteSpace(filters.CUIT))
+            {
+                parametros.Add(new SqlParameter("@CUIT", filters.CUIT));
+            }
+            if (!string.IsNullOrWhiteSpace(filters.Search) && filters.Search.Trim().Length == 3)
+            {
+                parametros.Add(new SqlParameter("@CodSistema", filters.Search.Trim()));
+            }
+            if (!string.IsNullOrWhiteSpace(filters.Search) && filters.Search.Trim().Length != 3)
+            {
+                parametros.Add(new SqlParameter("@ClaveTemporal", filters.Search.Trim()));
+            }
+            parametros.Add(new SqlParameter("@PageSize", filters.PageSize));
+            parametros.Add(new SqlParameter("@PageNumber", filters.PageNumber));
 
             var registros = InvokarSp2Lst(sp, parametros);
 
@@ -138,10 +187,10 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
         public RespuestaGenerica<EArchivo> BuscarPorId(object id)
         {
-            return BuscarPorId(id, true);
+            return BuscarPorId(id, false);
         }
 
-        public RespuestaGenerica<EArchivo> BuscarPorId(object id, bool generarUrl = true)
+        public RespuestaGenerica<EArchivo> BuscarPorId(object id, bool noUrl = true, bool genB64 = false)
         {
             _logger.Log(TraceEventType.Information, $"Ejecutando: {this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
             var sp = Constantes.StoredProcedures.EARCHIVO_GET_BY_ID;
@@ -155,11 +204,47 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             else
             {
                 var file = registro.First();
-                if (generarUrl)
+                if (!genB64)
                 {
-                    file.Ruta = GeneraRutaUrl(file);
+                    if (!noUrl)
+                    {
+                        file.Ruta = GeneraRutaUrl(file);
+                    }
+                    else
+                    {
+                        if (_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
+                        {
+                            file.Ruta = $"{_appSettings.RutaFisica}{file.Ruta}";
+                        }
+                        else
+                        {
+                            file.Ruta = $"{_appSettings.RutaFisica}\\{file.Ruta}";
+                        }
+                    }
                 }
-                _logger.Log(TraceEventType.Information, $"Registro Encontrado - Carousel: {JsonConvert.SerializeObject(file)} - SP: {sp}");
+                else
+                {
+                    //se genera el B64
+                    string ruta;
+                    if (_appSettings.RutaFisica.Substring(_appSettings.RutaFisica.Length - 1, 1).Equals("\\"))
+                    {
+                        ruta = $"{_appSettings.RutaFisica}{file.Ruta}\\{file.NombreArchivo}";
+                    }
+                    else
+                    {
+                        ruta = $"{_appSettings.RutaFisica}\\{file.Ruta}\\{file.NombreArchivo}";
+                    }
+
+                    //abrimos el archivo
+                    var stream = File.OpenRead(ruta);
+                    //generamos un contenedor de información
+                    var memory = new MemoryStream();
+                    //se copia el contenido del stream a la memoria
+                    stream.CopyTo(memory);
+                    file.Archivo = Convert.ToBase64String(memory.ToArray());
+
+                }
+                
                 return new RespuestaGenerica<EArchivo> { Ok = true, DataItem = file };
             }
         }
@@ -197,8 +282,9 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                 //new SqlParameter("@fechaDesde", DBNull.Value),
                 //new SqlParameter("@fechaHasta", DBNull.Value),
                 new SqlParameter("@claveTemporal", confirmacion.ClaveTemporal.Trim()),
-                new SqlParameter("@size", 200),
-                new SqlParameter("@Pagina", 1) };
+                new SqlParameter("@PageSize", 999),
+                new SqlParameter("@PageNumber", 1)
+            };
 
             var registros = InvokarSp2Lst(sp, parametros);
             if (registros.Count() == 0)
@@ -270,7 +356,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                     var res = InvokarNQuery(sp, parametros, true, contador == cantidad);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Log(ex);
                 //se procede a devolver el nombre de los archivos por el error transaccional
@@ -285,7 +371,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                         }
                         else
                         {
-                            File.Move($"{file.Ruta}\\{file.NombreArchivo}", $"{file.Ruta}\\{oldFile.no}");
+                            File.Move($"{file.Ruta}\\{file.NombreArchivo}", $"{file.Ruta}\\{oldFile.NombreArchivo}");
                         }
                     }
                 }
