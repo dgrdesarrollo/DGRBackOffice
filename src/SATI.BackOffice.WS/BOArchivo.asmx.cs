@@ -125,7 +125,7 @@ namespace SATI.BackOffice.WS
 
 
         [WebMethod(Description = "Alta de un archivo")]
-        public RespuestaGenerica<bool> AgregarArchivo(EArchivo entidad, bool esTemporal)
+        public RespuestaGenerica<(string,string)> AgregarArchivo(EArchivo entidad, bool esTemporal)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace SATI.BackOffice.WS
             {
                 _logger.Log(TraceEventType.Information,$"{this.GetType().Name}-{MethodBase.GetCurrentMethod()}");
                 _logger.Log(ex);
-                return new RespuestaGenerica<bool>
+                return new RespuestaGenerica<(string,string)>
                 {
                     Ok = false,
                     Mensaje = "Se produjo un error al intentar recuperar los archivos.",

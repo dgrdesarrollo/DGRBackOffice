@@ -30,9 +30,9 @@ namespace SATI.BackOffice.WS.Core.Servicios.Implementaciones
             _urlBase = ConfigurationManager.AppSettings["APIBase"];
         }    
 
-        public RespuestaGenerica<bool> AgregarArchivo(EArchivo entidad, bool esTemporal)
+        public RespuestaGenerica<(string,string)> AgregarArchivo(EArchivo entidad, bool esTemporal)
         {
-            ApiResponse<bool> respuesta;
+            ApiResponse<(string,string)> respuesta;
             try
             {
                 if (entidad.Archivo == null)
@@ -70,14 +70,14 @@ namespace SATI.BackOffice.WS.Core.Servicios.Implementaciones
                     string stringData = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     _logger.Log(TraceEventType.Information, $"stringData: {stringData}");
 
-                    respuesta = JsonConvert.DeserializeObject<ApiResponse<bool>>(stringData);
-                    return new RespuestaGenerica<bool> { Ok = true, DataItem = true, Mensaje = "Archivo agregado satisfactoriamente!!" };
+                    respuesta = JsonConvert.DeserializeObject<ApiResponse<(string,string)>>(stringData);
+                    return new RespuestaGenerica<(string,string)> { Ok = true, DataItem = respuesta.Data, Mensaje = "Archivo agregado satisfactoriamente!!" };
                 }
                 else
                 {
                     var stringData = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     _logger.Log(TraceEventType.Warning, JsonConvert.SerializeObject(stringData));
-                    return new RespuestaGenerica<bool>
+                    return new RespuestaGenerica<(string,string)>
                     {
                         Ok = false,
                         Mensaje = "Hubo un problema intentar agregar el archivo. Intente nuevamente",
@@ -142,7 +142,7 @@ namespace SATI.BackOffice.WS.Core.Servicios.Implementaciones
         public RespuestaGenerica<EArchivo> GetFileB64(Guid id)
         {
             return GetArchivo(id, false, true);
-        }
+        } 
         public RespuestaGenerica<EArchivo> GetArchivo(Guid id, bool noUrl = true, bool getB64 = false)
         {
             ApiResponse<EArchivo> respuesta;
@@ -159,8 +159,7 @@ namespace SATI.BackOffice.WS.Core.Servicios.Implementaciones
                 {
                     link = $"{_urlBase}{API_ROUTE}{ROUTE_GETFILE_B64}/{id}";
                 }
-                else
-                if (noUrl)
+                else if (noUrl)
                 {
                     link = $"{_urlBase}{API_ROUTE}{ROUTE_GETBYID_NOURL}?id={id}&nourl={noUrl}";
                 }

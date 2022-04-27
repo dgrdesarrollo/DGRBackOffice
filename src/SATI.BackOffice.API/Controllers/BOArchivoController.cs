@@ -134,8 +134,8 @@ namespace SATI.BackOffice.API.Controllers
         {
             _logger.LogInformation($"{this.GetType().Name} - {MethodBase.GetCurrentMethod().Name}");
 
-            await _eArchivoServicio.AgregarAsync(archivo, esTemporal);
-            return Ok(new ApiResponse<bool>(true));
+            var res = await _eArchivoServicio.AgregarAsync(archivo, esTemporal);
+            return Ok(new ApiResponse<(string,string)>(res));
         }
 
         [HttpPost]

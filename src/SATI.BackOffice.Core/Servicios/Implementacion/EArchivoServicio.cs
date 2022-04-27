@@ -38,11 +38,21 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             throw new NotImplementedException();
         }
 
-        public async Task<int> AgregarAsync(EArchivo entidad, bool esTemporal)
+
+        /// <summary>
+        /// se agrega o se mantiene el archivo.
+        /// </summary>
+        /// <param name="entidad"></param>
+        /// <param name="esTemporal"></param>
+        /// <returns>El valor devuelto es un string (Id en formato GUID) y el Nombre del Archivo (Id,FileName)</returns>
+        public async Task<(string, string)> AgregarAsync(EArchivo entidad, bool esTemporal)
         {
-            var entemp = entidad;
-            entemp.Archivo = string.Empty;
-            _logger.Log(TraceEventType.Information, JsonConvert.SerializeObject(entemp));
+            //var entemp = entidad;
+            //entemp.Archivo = string.Empty;
+            bool archivoEncontrado = false;
+            EArchivo archivoExist = new();
+            _logger.Log(TraceEventType.Information, $"CodSistema:{entidad.CodigoSistema}-ClaveTemp:{entidad.ClaveTemporal}-CUIT:{entidad.CUIT}-Tipo:{entidad.TipoSolicitud}-Req:{entidad.RequerimientoId}-SolId:{entidad.SolicitudId}-Nombre:{entidad.NombreArchivo}-Desc:{entidad.Descripcion}");
+
 
             entidad.CodigoSistema = entidad.CodigoSistema.ToUpper();
             entidad.Id = Guid.NewGuid().ToString();
@@ -70,7 +80,47 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             entidad.Ruta = ruta;
             entidad.FechaIndexacion = DateTime.Now;
 
-            //se procede a guardar el archivo en la ruta especificada
+            #region Verifico si el archivo ya se encuentra cargado en la base. se Consulta por Nombre
+            var sp = Constantes.StoredProcedures.EARCHIVO_GET_ALL;
+            var parametros = new List<SqlParameter> {
+                //new SqlParameter("@codSistema", DBNull.Value),
+                //new SqlParameter("@id", DBNull.Value),
+                //new SqlParameter("@fechaDesde", DBNull.Value),
+                //new SqlParameter("@fechaHasta", DBNull.Value),
+                new SqlParameter("@FileName", nn),
+                new SqlParameter("@PageSize", 999),
+                new SqlParameter("@PageNumber", 1)
+            };
+
+            var registros = InvokarSp2Lst(sp, parametros);
+            if (registros.Count > 0)
+            {
+                archivoExist = registros.First();
+                archivoEncontrado = true;
+            }
+            #endregion
+
+            //al verificar si existe o no el archivo, debo agregarlo o actualizarlo
+            //defino la ruta original o tomo la ruta nueva
+            if (archivoEncontrado)
+            {
+                if (archivoExist.Ruta.Substring(archivoExist.Ruta.Length - 1, 1).Equals("\\"))
+                {
+                    ruta = $"{_appSettings.RutaFisica}{archivoExist.Ruta}{archivoExist.NombreArchivo}";
+                }
+                else
+                {
+                    ruta = $"{_appSettings.RutaFisica}{archivoExist.Ruta}\\{archivoExist.NombreArchivo}";
+                }
+            }
+            else
+            {
+                ruta += $"\\{nn}";
+            }
+
+
+            //se procede a guardar el archivo en la ruta especificada pues se deja el ultimo archivo que se mando con el mismo nombre
+            //previamente se altero la ruta actual con la que existia para reemplazar el archivo existente
             #region Guardar archivo desde B64 a disco
 
             byte[] archBytes;
@@ -78,8 +128,9 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             archBytes = Convert.FromBase64String(entidad.Archivo.ToString());
 
 
-            MemoryStream ms = new MemoryStream(archBytes);
-            using (Stream fs = new FileStream($"{ruta}\\{nn}", FileMode.Create))
+            MemoryStream ms = new(archBytes);
+
+            using (Stream fs = new FileStream($"{ruta}", FileMode.Create))
             {
                 await ms.CopyToAsync(fs);
             }
@@ -89,14 +140,28 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
             #region Reacondicionamiento de la ruta - Se quita la porción del servidor 
 
             entidad.Ruta = entidad.Ruta.Replace(_appSettings.RutaFisica, "");
-
+            
             #endregion
+            if (!archivoEncontrado)            
+            {
+                var excluir = new List<string> { "Archivo" };
+                sp = Constantes.StoredProcedures.EARCHIVO_INSERT;
+                parametros = _repositorio.InferirParametros(entidad, excluir);
+                var res = InvokarNQuery(sp, parametros);
 
-            var sp = Constantes.StoredProcedures.EARCHIVO_INSERT;
-            var excluir = new List<string> { "Archivo" };
-            var parametros = _repositorio.InferirParametros(entidad, excluir);
-            var res = InvokarNQuery(sp, parametros);
-            return res;
+                if (res == 0)
+                {                    
+                    //NO inserto ni actualizo
+                    throw new BOException($"No se pudo insertar el archivo");
+                }
+            }
+
+            if (archivoEncontrado)
+            {
+                //devuelve el archivo ya existente.
+                return (archivoExist.Id, archivoExist.NombreArchivo);
+            }
+            return (entidad.Id,entidad.NombreArchivo);
         }
 
         public Task<int> AgregarDBAsync(EArchivo entidad)
@@ -244,7 +309,7 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                     file.Archivo = Convert.ToBase64String(memory.ToArray());
 
                 }
-                
+
                 return new RespuestaGenerica<EArchivo> { Ok = true, DataItem = file };
             }
         }
@@ -306,14 +371,14 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
                 string path;
                 if (item.Ruta.Substring(item.Ruta.Length - 1, 1).Equals("\\"))
                 {
-                    path = $"{item.Ruta}{item.NombreArchivo}";
+                    path = $"{_appSettings.RutaFisica}{item.Ruta}{item.NombreArchivo}";
                 }
                 else
                 {
-                    path = $"{item.Ruta}\\{item.NombreArchivo}";
+                    path = $"{_appSettings.RutaFisica}{ item.Ruta}\\{item.NombreArchivo}";
                 }
 
-                if (!File.Exists(path))
+                if (!File.Exists($"{path}"))
                 {
                     _logger.Log(TraceEventType.Warning, $"No se encontro al menos 1 archivo de los archivos agrupados con la clave temporal: {confirmacion.ClaveTemporal}. Analizar el caso.");
                     throw new BOException("No se encontro al menos 1 de los archivos de la Solicitud. No se puede confirmar la Solicitud. ");
@@ -331,11 +396,11 @@ namespace SATI.BackOffice.Core.Servicios.Implementacion
 
                 if (file.Ruta.Substring(file.Ruta.Length - 1, 1).Equals("\\"))
                 {
-                    File.Move($"{file.Ruta}{file.NombreArchivo}", $"{file.Ruta}{nnNew}");
+                    File.Move($"{_appSettings.RutaFisica}{file.Ruta}{file.NombreArchivo}", $"{_appSettings.RutaFisica}{file.Ruta}{nnNew}");
                 }
                 else
                 {
-                    File.Move($"{file.Ruta}\\{file.NombreArchivo}", $"{file.Ruta}\\{nnNew}");
+                    File.Move($"{_appSettings.RutaFisica}{file.Ruta}\\{file.NombreArchivo}", $"{_appSettings.RutaFisica}{file.Ruta}\\{nnNew}");
                 }
                 file.NombreArchivo = nnNew;
                 file.ClaveTemporal = string.Empty;
